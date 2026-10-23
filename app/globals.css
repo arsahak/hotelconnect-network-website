@@ -1,26 +1,169 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/*
+ * Design tokens — temporary boutique-hotel look (based on the client's reference).
+ * A designer will deliver the final layout, logo and huisstijl. When that
+ * arrives, only the values below need to change — components use these names.
+ *
+ * ink   = warm near-black (text, dark sections)
+ * brass = golden brown accent (buttons, labels, icons)
+ * cream / sand / line = warm off-white backgrounds and hairlines
+ */
+@theme {
+  --color-ink-950: #1b1611;
+  --color-ink-900: #241e18;
+  --color-ink-800: #30291f;
+  --color-ink-700: #4a4036;
+  --color-ink-500: #6f665b;
+  --color-ink-300: #b2a99d;
+  --color-ink-100: #ece6dd;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-cream: #fbf8f3;
+  --color-sand: #f4eee5;
+  --color-line: #e7dfd2;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  --color-brass-700: #6f5122;
+  --color-brass-600: #8a6830;
+  --color-brass-500: #9f7b3b;
+  --color-brass-400: #c4a067;
+  --color-brass-100: #f3eadb;
+
+  --color-moss-600: #3f6b4f;
+  --color-moss-100: #e2ece4;
+  --color-ember-600: #a4473a;
+  --color-ember-100: #f6e4e0;
+
+  --animate-modal-in: modal-in 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  --animate-hero-in: hero-in 1000ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-dropdown-in: dropdown-in 180ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  @keyframes dropdown-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes modal-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes hero-in {
+    from {
+      opacity: 0;
+      transform: translateY(16px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@theme inline {
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-gilda), ui-serif, Georgia, serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Lock page scroll while a modal is open. */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink-900);
+  }
+
+  ::selection {
+    background: var(--color-brass-100);
+    color: var(--color-ink-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brass-500);
+    outline-offset: 2px;
+  }
+}
+
+/* Slow, steady zoom for the hero photos (see HeroSlideshow). */
+@keyframes hero-ken-burns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+/*
+ * Slightly heavier serif titles. Gilda Display has no bold weight, so a thin
+ * stroke (relative to the font size) thickens the letters a little.
+ */
+@utility heading-strong {
+  -webkit-text-stroke: 0.014em currentColor;
+}
+
+/*
+ * Gentle fade-up when an element scrolls into view. Pure CSS (scroll-driven
+ * animation): browsers without support, and visitors who prefer reduced
+ * motion, simply see the content without the effect.
+ */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: reveal-up linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 40%;
+      }
+    }
+  }
+}
+
+/* Small uppercase label used above headings. */
+@utility eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }

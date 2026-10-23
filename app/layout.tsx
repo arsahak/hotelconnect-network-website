@@ -16,8 +16,8 @@ const gilda = Gilda_Display({
 });
 
 export const metadata: Metadata = {
-  // Used to build absolute URLs for the share image. Set NEXT_PUBLIC_SITE_URL on the live server.
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  // Base for absolute URLs in share previews. NEXT_PUBLIC_SITE_URL can override it (e.g. a custom domain later).
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? site.url),
   title: {
     default: `${site.name} – private network for boutique hotels`,
     template: `%s | ${site.name}`,
@@ -26,6 +26,7 @@ export const metadata: Metadata = {
   applicationName: site.name,
   openGraph: {
     type: "website",
+    url: "/",
     siteName: site.name,
     locale: "en",
     title: `${site.name} – private network for boutique hotels`,

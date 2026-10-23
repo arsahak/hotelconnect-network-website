@@ -3,6 +3,8 @@ import type { MembershipPlan, NavItem } from "./types";
 export const site = {
   name: "HotelConnect Network",
   shortName: "HotelConnect",
+  // Live address. Used for absolute links in share previews (og:image, og:url).
+  url: "https://hotelconnect-network-website.vercel.app",
   description:
     "The private B2B network for boutique hotels and their suppliers. Compliance, tenders, jobs and group purchasing in one place.",
   // TODO: replace with the real contact details from the client.

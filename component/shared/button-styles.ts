@@ -4,7 +4,7 @@ export type ButtonVariant = "primary" | "dark" | "outline" | "ghost" | "light" |
 export type ButtonSize = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-md font-medium whitespace-nowrap transition-colors duration-200 disabled:pointer-events-none disabled:opacity-60";
+  "inline-flex items-center justify-center gap-2 rounded-md text-center font-medium transition-colors sm:whitespace-nowrap duration-200 disabled:pointer-events-none disabled:opacity-60";
 
 const variants: Record<ButtonVariant, string> = {
   primary: "bg-brass-500 text-white shadow-sm shadow-brass-700/20 hover:bg-brass-600",

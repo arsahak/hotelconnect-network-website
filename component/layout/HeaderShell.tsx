@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useSyncExternalStore, type ReactNode } from "react";
+import { useMenuOpen } from "./menu-state";
 
 function subscribeScroll(callback: () => void) {
   window.addEventListener("scroll", callback, { passive: true });
@@ -13,7 +14,7 @@ export const headerClasses =
 
 /**
  * The header is transparent (white text over the hero photo) on the homepage
- * until the visitor scrolls; everywhere else it is solid.
+ * until the visitor scrolls or opens the mobile menu; everywhere else it is solid.
  * Children style themselves with `group-data-[overlay=true]/header:*`.
  */
 export function HeaderShell({ children }: { children: ReactNode }) {
@@ -23,7 +24,9 @@ export function HeaderShell({ children }: { children: ReactNode }) {
     () => window.scrollY > 24,
     () => false,
   );
-  const overlay = pathname === "/" && !scrolled;
+  const menuOpen = useMenuOpen();
+  // Solid while the mobile menu is open, so the menu doesn't hang under a see-through header.
+  const overlay = pathname === "/" && !scrolled && !menuOpen;
 
   return (
     <header data-overlay={overlay} className={headerClasses}>

@@ -1,13 +1,13 @@
 import Image from "next/image";
-import { homeImages } from "@/lib/data/home";
+import { homeImages } from "@/lib/data/images";
 import { site } from "@/lib/site";
-import { AboutButton } from "@/component/shared/AboutButton";
+import { ButtonLink } from "@/component/shared/ButtonLink";
 import { Icon } from "@/component/shared/Icon";
 import { Eyebrow } from "@/component/shared/Eyebrow";
 import { sectionTitleClasses } from "@/component/shared/SectionHeading";
 import { cn } from "@/lib/cn";
 
-/** Photo / text split about who is behind the platform. "About us" opens the popup. */
+/** Photo / text split about who is behind the platform. "About us" goes to /about. */
 export function AboutStory() {
   return (
     <section aria-labelledby="about-title" className="grid bg-sand lg:grid-cols-2">
@@ -34,10 +34,10 @@ export function AboutStory() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-6">
-            <AboutButton variant="primary">
+            <ButtonLink href="/about">
               About us
               <Icon name="arrow-right" size={16} />
-            </AboutButton>
+            </ButtonLink>
             <div className="flex items-center gap-3">
               <div className="flex -space-x-2" aria-hidden="true">
                 {site.founders.map((name) => (

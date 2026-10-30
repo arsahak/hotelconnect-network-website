@@ -11,13 +11,15 @@ type ModalProps = {
   label: string;
   children: ReactNode;
   className?: string;
+  /** Wider dialog, e.g. for the three membership plans side by side. */
+  wide?: boolean;
 };
 
 /**
  * Native <dialog> modal: focus trap, Escape to close and top-layer
  * rendering come from the browser. Clicking the backdrop also closes it.
  */
-export function Modal({ open, onClose, label, children, className }: ModalProps) {
+export function Modal({ open, onClose, label, children, className, wide = false }: ModalProps) {
   const ref = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -36,7 +38,8 @@ export function Modal({ open, onClose, label, children, className }: ModalProps)
         if (event.target === event.currentTarget) onClose();
       }}
       className={cn(
-        "m-auto max-h-[calc(100dvh_-_2rem)] w-[calc(100%_-_2rem)] max-w-3xl overflow-y-auto rounded-xl bg-white p-0 text-ink-900 shadow-2xl shadow-ink-950/30 backdrop:bg-ink-950/60 backdrop:backdrop-blur-sm open:animate-modal-in",
+        "m-auto max-h-[calc(100dvh_-_2rem)] w-[calc(100%_-_2rem)] overflow-y-auto rounded-xl bg-white p-0 text-ink-900 shadow-2xl shadow-ink-950/30 backdrop:bg-ink-950/60 backdrop:backdrop-blur-sm open:animate-modal-in",
+        wide ? "max-w-6xl" : "max-w-3xl",
         className,
       )}
     >

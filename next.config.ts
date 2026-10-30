@@ -5,11 +5,17 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
-    // Placeholder photos until the client delivers real hotel/supplier images.
     remotePatterns: [
+      // Placeholder photos until the client delivers real hotel/supplier images.
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
+      // Photos and logos uploaded through the dashboard (DigitalOcean Spaces).
+      {
+        protocol: "https",
+        hostname: "**.digitaloceanspaces.com",
         pathname: "/**",
       },
     ],

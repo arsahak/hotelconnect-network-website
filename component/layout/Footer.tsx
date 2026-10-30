@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { footerNav, legalNav, site, socialLinks } from "@/lib/site";
-import { AboutButton } from "@/component/shared/AboutButton";
 import { Container } from "@/component/shared/Container";
 import { Icon, type IconName } from "@/component/shared/Icon";
 import { Logo } from "@/component/shared/Logo";
@@ -23,7 +22,7 @@ export function Footer() {
       <Container className="grid gap-14 py-16 text-center sm:text-left lg:grid-cols-12 lg:py-20">
         {/* Brand */}
         <div className="flex flex-col items-center sm:items-start lg:col-span-4">
-          <Logo tone="light" />
+          <Logo tone="light" size="h-14" />
           <p className="mt-6 max-w-sm text-sm leading-relaxed text-white/60">{site.description}</p>
           <ul aria-label="Follow us" className="mt-7 flex items-center justify-center gap-3 sm:justify-start">
             {socialLinks.map((social) => (
@@ -73,10 +72,10 @@ export function Footer() {
                 </ContactLink>
               </li>
               <li>
-                <AboutButton unstyled className="group inline-flex items-center gap-3 text-sm text-white/65 transition-colors hover:text-brass-400">
+                <Link href="/about" className="group inline-flex items-center gap-3 text-sm text-white/65 transition-colors hover:text-brass-400">
                   <ContactIcon icon="users" />
                   About us
-                </AboutButton>
+                </Link>
               </li>
             </ul>
           </div>

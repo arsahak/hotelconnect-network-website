@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { lotusDataUri } from "@/lib/brand-mark";
+import { brandMarkDataUri } from "@/lib/brand-mark";
 
 // Home-screen icon for iPhone / iPad.
 export const size = { width: 180, height: 180 };
@@ -18,7 +18,7 @@ export default function AppleIcon() {
           background: "#1b1611",
         }}
       >
-        <img src={lotusDataUri("#c4a067", 2.4)} width={120} height={96} alt="" />
+        <img src={brandMarkDataUri()} width={83} height={100} alt="" />
       </div>
     ),
     size,

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { site } from "@/lib/site";
+import { getCachedSettings } from "@/component/shared/cached-settings";
 
 /** Thin bar at the very top during the test phase (briefing §2.1). */
-export function TestPhaseBar() {
-  if (!site.testPhase) return null;
+export async function TestPhaseBar() {
+  if (!(await getCachedSettings()).testPhase) return null;
 
   return (
     <div className="bg-ink-950 text-white/80">

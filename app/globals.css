@@ -2,8 +2,8 @@
 
 /*
  * Design tokens — temporary boutique-hotel look (based on the client's reference).
- * A designer will deliver the final layout, logo and huisstijl. When that
- * arrives, only the values below need to change — components use these names.
+ * The logo is final (public/assets/logo); the rest of the huisstijl may still
+ * change — then only the values below need to change, components use these names.
  *
  * ink   = warm near-black (text, dark sections)
  * brass = golden brown accent (buttons, labels, icons)
@@ -99,16 +99,6 @@
   :focus-visible {
     outline: 2px solid var(--color-brass-500);
     outline-offset: 2px;
-  }
-}
-
-/* Slow, steady zoom for the hero photos (see HeroSlideshow). */
-@keyframes hero-ken-burns {
-  from {
-    transform: scale(1);
-  }
-  to {
-    transform: scale(1.08);
   }
 }
 

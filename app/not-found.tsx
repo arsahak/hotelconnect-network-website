@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Footer } from "@/component/layout/Footer";
 import { Navbar } from "@/component/layout/Navbar";
 import { TestPhaseBar } from "@/component/layout/TestPhaseBar";
+import { BrandMark } from "@/component/shared/BrandMark";
 import { ButtonLink } from "@/component/shared/ButtonLink";
 import { Container } from "@/component/shared/Container";
 import { Eyebrow } from "@/component/shared/Eyebrow";
@@ -23,26 +24,16 @@ export default function NotFound() {
       <TestPhaseBar />
       <Navbar />
       <main id="main" className="relative isolate flex flex-1 items-center overflow-hidden bg-sand py-24 lg:py-32">
-        {/* Large faded lotus in the background */}
-        <svg
-          viewBox="0 0 40 32"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="0.6"
-          strokeLinejoin="round"
-          aria-hidden="true"
-          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 w-[44rem] max-w-none -translate-x-1/2 -translate-y-1/2 text-brass-500/10"
-        >
-          <path d="M20 3c5 6 5 14 0 21-5-7-5-15 0-21Z" />
-          <path d="M20 24c-7-1-12-7-12-14 6 1 10 5 12 14Z" />
-          <path d="M20 24c7-1 12-7 12-14-6 1-10 5-12 14Z" />
-          <path d="M20 26c-8 0-15-4-18-10 7 0 13 3 18 10Z" />
-          <path d="M20 26c8 0 15-4 18-10-7 0-13 3-18 10Z" />
-        </svg>
+        {/* The logo's "H", large and faded in the background */}
+        <BrandMark
+          tone="current"
+          className="pointer-events-none absolute top-1/2 left-1/2 -z-10 w-[18rem] -translate-x-1/2 -translate-y-1/2 text-brass-500/[0.07] sm:w-[24rem]"
+        />
 
         <Container className="text-center">
           <div className="mx-auto max-w-xl">
-            <p className="heading-strong font-display text-7xl text-brass-500 sm:text-8xl">404</p>
+            <BrandMark className="mx-auto w-12 sm:w-14" />
+            <p className="heading-strong mt-6 font-display text-7xl text-brass-500 sm:text-8xl">404</p>
             <Eyebrow centered className="mt-6">
               Page not found
             </Eyebrow>

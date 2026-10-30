@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Vacancy } from "@/lib/types";
 import { emailApplyUrl, whatsappApplyUrl } from "@/lib/apply-links";
 import { cn } from "@/lib/cn";
+import { formatDate } from "@/lib/format";
 import { Badge } from "./Badge";
 import { buttonClasses } from "./button-styles";
 import { Icon } from "./Icon";
@@ -24,7 +25,7 @@ export function VacancyCard({ vacancy, className }: { vacancy: Vacancy; classNam
         ) : (
           <Badge tone="outline">{vacancy.category}</Badge>
         )}
-        <span className="text-xs text-ink-500">{vacancy.postedLabel}</span>
+        <span className="text-xs text-ink-500">{formatDate(vacancy.publishedAt)}</span>
       </div>
 
       <h3 className="mt-5 font-display text-2xl leading-snug text-ink-950">
@@ -32,12 +33,12 @@ export function VacancyCard({ vacancy, className }: { vacancy: Vacancy; classNam
           {vacancy.title}
         </Link>
       </h3>
-      <p className="mt-1 text-sm text-ink-700">{vacancy.hotelName}</p>
+      <p className="mt-1 text-sm text-ink-700">{vacancy.hotel.name}</p>
 
       <ul className="mt-5 space-y-2 border-t border-line pt-5 text-[0.8125rem] text-ink-500">
         <li className="flex items-center gap-2">
           <Icon name="map-pin" size={15} className="text-brass-500" />
-          {vacancy.city}
+          {vacancy.city}, {vacancy.region}
         </li>
         <li className="flex items-center gap-2">
           <Icon name="briefcase" size={15} className="text-brass-500" />
@@ -50,15 +51,17 @@ export function VacancyCard({ vacancy, className }: { vacancy: Vacancy; classNam
       </ul>
 
       <div className="mt-auto flex flex-wrap gap-2 pt-6">
-        <a
-          href={whatsappApplyUrl(vacancy)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={buttonClasses({ size: "sm" })}
-        >
-          <Icon name="chat" size={15} />
-          Apply via WhatsApp
-        </a>
+        {vacancy.applyWhatsapp && (
+          <a
+            href={whatsappApplyUrl(vacancy)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={buttonClasses({ size: "sm" })}
+          >
+            <Icon name="chat" size={15} />
+            Apply via WhatsApp
+          </a>
+        )}
         <a href={emailApplyUrl(vacancy)} className={buttonClasses({ variant: "outline", size: "sm" })}>
           <Icon name="mail" size={15} />
           Email

@@ -1,8 +1,8 @@
-import Image from "next/image";
 import type { Hotel } from "@/lib/types";
 import { cn } from "@/lib/cn";
 import { Badge } from "./Badge";
 import { Icon } from "./Icon";
+import { Photo } from "./Photo";
 
 /**
  * Hotel card for the homepage and the hotel guide: photo, name, short text.
@@ -25,15 +25,14 @@ export function HotelCard({
       )}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-sand">
-        <Image
+        <Photo
           src={hotel.image}
           alt={`Room at ${hotel.name}`}
-          fill
           sizes={sizes}
-          className="object-cover transition-transform duration-700 group-hover:scale-105"
+          className="transition-transform duration-700 group-hover:scale-105"
         />
         {hotel.offer && (
-          <Badge tone="glass" className="absolute top-3 left-3">
+          <Badge tone="glass" className="absolute top-3 left-3 z-10">
             <Icon name="tag" size={13} />
             {hotel.offer}
           </Badge>
@@ -48,6 +47,7 @@ export function HotelCard({
         <p className="mt-2 line-clamp-2 text-[0.8125rem] leading-relaxed text-ink-500">
           {hotel.description}
         </p>
+        {hotel.bookingUrl && (
         <a
           href={hotel.bookingUrl}
           target="_blank"
@@ -58,6 +58,7 @@ export function HotelCard({
           <Icon name="arrow-up-right" size={14} />
           <span className="sr-only">(opens in a new tab)</span>
         </a>
+        )}
       </div>
     </article>
   );

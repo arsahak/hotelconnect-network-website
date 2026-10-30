@@ -23,7 +23,7 @@ export const navUnderlineClasses =
 /** Desktop navigation links. `pathname` highlights the current page. */
 export function NavLinkList({ pathname }: { pathname?: string }) {
   return (
-    <ul className="flex items-center gap-7 xl:gap-9">
+    <ul className="flex items-center gap-6 xl:gap-9">
       {mainNav.map((item) => {
         const active = isActivePath(pathname, item.href);
         return (

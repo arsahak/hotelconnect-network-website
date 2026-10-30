@@ -1,15 +1,16 @@
-import { heroSlides } from "@/lib/data/home";
+import Image from "next/image";
+import { heroImage } from "@/lib/data/images";
+import { site } from "@/lib/site";
 import { ButtonLink } from "@/component/shared/ButtonLink";
 import { Container } from "@/component/shared/Container";
 import { Icon } from "@/component/shared/Icon";
 import { JoinButton } from "@/component/shared/JoinButton";
 import { HeroSearch } from "./HeroSearch";
-import { HeroSlideshow } from "./HeroSlideshow";
 import { Eyebrow } from "@/component/shared/Eyebrow";
 
 /**
- * Full-width photo hero (3 photos that fade into each other). It slides under
- * the transparent header; the search box overlaps the next section on large screens.
+ * Full-width hero with one calm photo. It slides under the transparent header;
+ * the search box overlaps the next section on large screens.
  */
 export function Hero() {
   return (
@@ -21,27 +22,35 @@ export function Hero() {
       aria-labelledby="hero-title"
       className="relative isolate z-20 -mt-[calc(5rem_+_1px)] flex flex-col bg-ink-950 text-white lg:min-h-[calc(100svh_-_8rem)]"
     >
-      <HeroSlideshow slides={heroSlides} />
+      <Image
+        src={heroImage.src}
+        alt={heroImage.alt}
+        fill
+        preload
+        sizes="100vw"
+        className="-z-20 object-cover"
+      />
       {/* Even shade over the photo (darker in the middle, where the centred text sits) */}
       <div className="absolute inset-0 -z-10 bg-ink-950/45" />
       <div className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_center,rgba(27,22,17,0.45),transparent_70%)]" />
       <div className="absolute inset-x-0 top-0 -z-10 h-40 bg-gradient-to-b from-ink-950/60 to-transparent" />
 
       <Container className="flex flex-1 items-center justify-center pt-36 pb-10 lg:pt-28 lg:pb-28">
-        <div className="mx-auto max-w-3xl text-center">
-          <Eyebrow tone="light" centered className="animate-hero-in [&>span]:hidden sm:[&>span]:block">
-            A private B2B network for boutique hotels
-          </Eyebrow>
+        <div className="mx-auto max-w-4xl text-center">
           <h1
             id="hero-title"
             // Gilda Display has no bold weight, so a thin text-stroke makes the letters heavier.
-            className="mt-5 animate-hero-in font-display text-5xl leading-[1.08] text-balance [-webkit-text-stroke:1px_currentColor] [animation-delay:120ms] sm:text-6xl lg:text-[4.25rem] lg:[-webkit-text-stroke:1.4px_currentColor]"
+            className="animate-hero-in font-display text-[2.75rem] leading-[1.1] text-balance [-webkit-text-stroke:1px_currentColor] sm:text-6xl lg:text-[4rem] lg:[-webkit-text-stroke:1.4px_currentColor]"
           >
-            Less Admin, More Hospitality
+            <span className="block">Where guests feel at home.</span>
+            <span className="block">And you feel supported.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-xl animate-hero-in text-[0.9375rem] leading-relaxed text-white/85 [animation-delay:240ms] sm:text-base">
-            The private network where boutique hotels and verified suppliers find each other.
-            Compliance, tenders, jobs and group purchasing, mostly handled automatically.
+          <Eyebrow tone="light" centered className="mt-6 animate-hero-in [animation-delay:120ms]">
+            {site.name}
+          </Eyebrow>
+          <p className="mx-auto mt-5 max-w-2xl animate-hero-in text-[0.9375rem] leading-relaxed text-white/85 [animation-delay:240ms] sm:text-base">
+            The network that connects the best suppliers and skilled people — simplifying your work
+            and turning your collective purchasing power into real savings.
           </p>
           <div className="mt-9 flex animate-hero-in flex-col justify-center gap-3 [animation-delay:360ms] sm:flex-row">
             <JoinButton size="lg">

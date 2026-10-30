@@ -1,4 +1,7 @@
-import { featuredHotels } from "@/lib/data/home";
+import { cacheLife, cacheTag } from "next/cache";
+import { getSponsoredAction } from "@/app/actions/ads";
+import { listHotelsAction } from "@/app/actions/hotel";
+import { SponsoredTag, withSponsored } from "@/component/shared/sponsored";
 import { ButtonLink } from "@/component/shared/ButtonLink";
 import { Container } from "@/component/shared/Container";
 import { HotelCard } from "@/component/shared/HotelCard";
@@ -8,7 +11,14 @@ import { sectionTitleClasses } from "@/component/shared/SectionHeading";
 import { cn } from "@/lib/cn";
 
 /** Homepage block 3: intro text on the left, a selection of member hotels on the right. */
-export function FeaturedHotels() {
+export async function FeaturedHotels() {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("hotels", "ads");
+  const [featured, sponsored] = await Promise.all([listHotelsAction({ featured: true, limit: 3 }), getSponsoredAction()]);
+  const hotels = withSponsored(sponsored.data?.hotels ?? [], featured.data?.items ?? [], 3);
+  if (hotels.length === 0) return null;
+
   return (
     <section aria-labelledby="hotels-title" className="py-20 lg:py-28">
       <Container className="grid gap-12 lg:grid-cols-12 lg:items-center">
@@ -28,8 +38,11 @@ export function FeaturedHotels() {
         </div>
 
         <div className="grid gap-6 sm:grid-cols-3 lg:col-span-8">
-          {featuredHotels.map((hotel) => (
-            <HotelCard key={hotel.id} hotel={hotel} />
+          {hotels.map(({ item, sponsored }) => (
+            <div key={item._id} className="relative">
+              <HotelCard hotel={item} className="h-full" />
+              {sponsored && <SponsoredTag className="absolute top-3 left-3 z-10" />}
+            </div>
           ))}
         </div>
       </Container>

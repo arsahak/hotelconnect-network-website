@@ -1,4 +1,7 @@
-import { urgentVacancies } from "@/lib/data/home";
+import { cacheLife, cacheTag } from "next/cache";
+import { getSponsoredAction } from "@/app/actions/ads";
+import { listVacanciesAction } from "@/app/actions/vacancy";
+import { SponsoredTag, withSponsored } from "@/component/shared/sponsored";
 import { ButtonLink } from "@/component/shared/ButtonLink";
 import { Container } from "@/component/shared/Container";
 import { Icon } from "@/component/shared/Icon";
@@ -6,7 +9,15 @@ import { SectionHeading } from "@/component/shared/SectionHeading";
 import { VacancyCard } from "@/component/shared/VacancyCard";
 
 /** Homepage block 2: the most urgent jobs right now. */
-export function UrgentVacancies() {
+export async function UrgentVacancies() {
+  "use cache";
+  cacheLife("minutes");
+  cacheTag("vacancies", "ads");
+  // The API sorts urgent jobs first; paid spots go before them.
+  const [urgent, sponsored] = await Promise.all([listVacanciesAction({ limit: 3 }), getSponsoredAction()]);
+  const vacancies = withSponsored(sponsored.data?.jobs ?? [], urgent.data?.items ?? [], 3);
+  if (vacancies.length === 0) return null;
+
   return (
     <section aria-labelledby="vacancies-title" className="bg-sand py-20 lg:py-28">
       <Container>
@@ -24,8 +35,11 @@ export function UrgentVacancies() {
         />
 
         <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {urgentVacancies.map((vacancy) => (
-            <VacancyCard key={vacancy.id} vacancy={vacancy} />
+          {vacancies.map(({ item, sponsored }) => (
+            <div key={item._id} className="relative">
+              <VacancyCard vacancy={item} className="h-full" />
+              {sponsored && <SponsoredTag className="absolute -top-3 left-5 z-10" />}
+            </div>
           ))}
         </div>
 

@@ -1,4 +1,3 @@
-import { ButtonLink } from "@/component/shared/ButtonLink";
 import { Container } from "@/component/shared/Container";
 import { Icon, type IconName } from "@/component/shared/Icon";
 import { JoinButton } from "@/component/shared/JoinButton";
@@ -14,7 +13,13 @@ const features: { icon: IconName; title: string; text: string }[] = [
   { icon: "wrench", title: "Repair Contacts", text: "One tap to call" },
   { icon: "book", title: "Knowledge Base", text: "Laws and official sources" },
   { icon: "tag", title: "Corporate Vouchers", text: "Business deals at hotels" },
-  { icon: "users", title: "Members' Forum", text: "Private and moderated" },
+  { icon: "building", title: "Hotel Guide", text: "Direct bookings, 0% commission" },
+];
+
+const hotelPoints = [
+  "Compare up to 3 quotes for every tender",
+  "Save on energy and other costs with group purchasing",
+  "Direct room bookings at 0% commission",
 ];
 
 const supplierPoints = [
@@ -23,7 +28,7 @@ const supplierPoints = [
   "Good reviews move you up the ranking",
 ];
 
-/** What the platform offers: icon grid for hotels, then cards for suppliers and the forum. */
+/** What the platform offers: icon grid, then a card for suppliers and one for hotels (with prices). */
 export function PlatformFeatures() {
   return (
     <section aria-labelledby="platform-title" className="py-20 lg:py-28">
@@ -60,7 +65,7 @@ export function PlatformFeatures() {
           <article className="reveal flex flex-col rounded-lg bg-ink-900 p-8 text-white sm:p-10">
             <div className="flex items-center justify-between gap-4">
               <Eyebrow tone="light">For suppliers</Eyebrow>
-              <span className="rounded bg-white/10 px-2 py-1 text-xs text-white/80">Free in phase 1</span>
+              <span className="rounded bg-white/10 px-2 py-1 text-xs text-white/80">Free, or €49 a month</span>
             </div>
             <h3 className="heading-strong mt-4 font-display text-3xl">Get Requests, Not Cold Calls</h3>
             <ul className="mt-6 space-y-3 text-sm text-white/75">
@@ -77,19 +82,21 @@ export function PlatformFeatures() {
           </article>
 
           <article className="reveal flex flex-col rounded-lg bg-sand p-8 sm:p-10">
-            <span className="grid size-12 place-items-center rounded-full bg-white text-brass-500 ring-1 ring-line">
-              <Icon name="lock" size={20} strokeWidth={1.5} />
-            </span>
-            <h3 className="heading-strong mt-5 font-display text-3xl text-ink-950">The Members&apos; Forum</h3>
-            <p className="mt-3 max-w-md text-[0.9375rem] leading-relaxed text-ink-500">
-              Our private forum is for members only. Log in or become a member to join the
-              conversation about the challenges in hospitality.
-            </p>
-            <div className="mt-auto flex flex-wrap gap-3 pt-8">
-              <ButtonLink href="/login" variant="dark">
-                Log in
-              </ButtonLink>
-              <JoinButton variant="outline" />
+            <div className="flex items-center justify-between gap-4">
+              <Eyebrow>For hotels</Eyebrow>
+              <span className="rounded bg-white px-2 py-1 text-xs text-ink-500 ring-1 ring-line">€499 per year</span>
+            </div>
+            <h3 className="heading-strong mt-4 font-display text-3xl text-ink-950">Less Admin, More Hospitality</h3>
+            <ul className="mt-6 space-y-3 text-sm text-ink-700">
+              {hotelPoints.map((point) => (
+                <li key={point} className="flex gap-2.5">
+                  <Icon name="check" size={17} className="mt-0.5 shrink-0 text-brass-500" />
+                  {point}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-auto pt-8">
+              <JoinButton variant="dark">Join as a hotel</JoinButton>
             </div>
           </article>
         </div>

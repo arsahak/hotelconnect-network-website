@@ -1,61 +1,61 @@
+import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
 import { site } from "@/lib/site";
 
-const tones = {
-  dark: { name: "text-ink-950", sub: "text-brass-600", mark: "text-brass-500" },
-  light: { name: "text-white", sub: "text-brass-400", mark: "text-brass-400" },
-  // Follows the header: white over the hero, dark once the header turns solid.
-  header: {
-    name: "text-ink-950 group-data-[overlay=true]/header:text-white",
-    sub: "text-brass-600 group-data-[overlay=true]/header:text-white/70",
-    mark: "text-brass-500 group-data-[overlay=true]/header:text-brass-400",
-  },
+const LOGOS = {
+  black: "/assets/logo/hotelconnect-network-blacklogo.svg",
+  white: "/assets/logo/hotelconnect-network-whitelogo.svg",
 };
 
+// The SVG files are 1600 × 402. width/height must keep that ratio, or the
+// browser squeezes the logo into a too-narrow box and it looks small and soft.
+const WIDTH = 1600;
+const HEIGHT = 402;
+
 /**
- * Placeholder logo. The designer will deliver the real logo — swap this
- * component's content for it (e.g. next/image with /logo.svg).
+ * The HotelConnect Network logo.
+ * - dark: black lettering, for light backgrounds
+ * - light: white lettering, for dark backgrounds (footer)
+ * - header: follows the header — white over the homepage photo, black once
+ *   the header turns solid (see HeaderShell, `data-overlay`)
  */
 export function Logo({
   tone = "dark",
+  size,
   className,
 }: {
-  tone?: keyof typeof tones;
+  tone?: "dark" | "light" | "header";
+  /** Height override, e.g. "h-14" in the footer. Default 48px (h-12). */
+  size?: string;
   className?: string;
 }) {
-  const colors = tones[tone];
+  const image = (src: string, extra?: string) => (
+    <Image
+      src={src}
+      alt=""
+      width={WIDTH}
+      height={HEIGHT}
+      unoptimized
+      preload={tone === "header"}
+      className={cn("w-auto select-none", size ?? "h-12", extra)}
+    />
+  );
+
   return (
     <Link
       href="/"
       aria-label={`${site.name} – go to the homepage`}
-      className={cn("inline-flex items-center gap-3", className)}
+      className={cn("inline-flex shrink-0 items-center", className)}
     >
-      <svg
-        viewBox="0 0 40 32"
-        width="40"
-        height="32"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.2"
-        strokeLinejoin="round"
-        aria-hidden="true"
-        className={cn("transition-colors", colors.mark)}
-      >
-        <path d="M20 3c5 6 5 14 0 21-5-7-5-15 0-21Z" />
-        <path d="M20 24c-7-1-12-7-12-14 6 1 10 5 12 14Z" />
-        <path d="M20 24c7-1 12-7 12-14-6 1-10 5-12 14Z" />
-        <path d="M20 26c-8 0-15-4-18-10 7 0 13 3 18 10Z" />
-        <path d="M20 26c8 0 15-4 18-10-7 0-13 3-18 10Z" />
-      </svg>
-      <span className="flex flex-col leading-none">
-        <span className={cn("text-base leading-none font-bold tracking-[0.14em] uppercase transition-colors", colors.name)}>
-          HotelConnect
-        </span>
-        <span className={cn("mt-1 text-[0.5625rem] leading-none font-semibold tracking-[0.38em] uppercase transition-colors", colors.sub)}>
-          Network
-        </span>
-      </span>
+      {tone === "dark" && image(LOGOS.black)}
+      {tone === "light" && image(LOGOS.white)}
+      {tone === "header" && (
+        <>
+          {image(LOGOS.black, "group-data-[overlay=true]/header:hidden")}
+          {image(LOGOS.white, "hidden group-data-[overlay=true]/header:block")}
+        </>
+      )}
     </Link>
   );
 }

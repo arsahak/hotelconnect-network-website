@@ -1,60 +1,125 @@
+// Shapes of the website's own config, and of the data the API returns.
+// Keep the API shapes in sync with backend/models/*.
+
 export type NavItem = {
   label: string;
   href: string;
 };
 
-export type Supplier = {
-  id: string; // L001, L002, ...
-  slug: string;
+/** A supplier signed in on the website (briefing §2.4). */
+export type Member = { memberNumber: string; name: string };
+
+export type MembershipPlan = {
+  id: "hotel" | "supplier-contract" | "supplier-commission";
+  /** Which kind of member signs up with this plan (also the waitlist type). */
+  memberType: "hotel" | "supplier";
   name: string;
-  tagline: string;
-  categories: string[];
-  regions: string[];
-  website: string;
-  image: string;
+  /** Who the plan is for, one short line. */
+  audience: string;
+  priceLabel: string;
+  priceNote: string;
+  memberNumber: string;
+  features: string[];
+  cta: string;
+  highlighted?: boolean;
 };
 
-export type Vacancy = {
-  id: string;
-  slug: string;
-  title: string;
-  hotelName: string;
-  city: string;
-  category: string;
-  employmentType: string;
-  postedLabel: string;
-  urgent: boolean;
-  whatsapp: string; // international format without "+", e.g. 31612345678
-  email: string;
+/** A paged list from the API. */
+export type Page<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  pages: number;
+  limit: number;
 };
 
 export type Hotel = {
-  id: string; // H0001, H0002, ...
-  slug: string;
+  _id: string;
+  memberNumber: string;
   name: string;
+  slug: string;
   city: string;
+  region: string;
   address: string;
   description: string;
   image: string;
   bookingUrl: string;
   offer?: string;
+  featured: boolean;
 };
 
-export type Story = {
+export type Supplier = {
+  _id: string;
+  memberNumber: string;
+  name: string;
   slug: string;
-  kind: "Interview" | "Article" | "Column";
+  logo: string;
+  image: string;
+  tagline: string;
+  description: string;
+  categories: string[];
+  regions: string[];
+  website: string;
+  featured: boolean;
+};
+
+export type Vacancy = {
+  _id: string;
   title: string;
+  slug: string;
+  description: string;
+  category: string;
+  employmentType: string;
+  city: string;
+  region: string;
+  urgent: boolean;
+  applyEmail: string;
+  applyWhatsapp?: string;
+  /** Briefing §3.7: visual (photo/video, WhatsApp first) or traditional (text and form). */
+  style?: "traditional" | "visual";
+  image?: string;
+  videoUrl?: string;
+  publishedAt?: string;
+  hotel: { name: string; slug: string; city: string; image: string };
+};
+
+export type VoucherTeaser = {
+  _id: string;
+  title: string;
+  teaser: string;
+  image: string;
+  discountPercent: number;
+  category: string;
+  region: string;
+  promoted?: boolean;
+  hotel: { name: string; city: string };
+};
+
+export type Voucher = VoucherTeaser & {
+  description: string;
+  bookingUrl: string;
+};
+
+export type Article = {
+  _id: string;
+  title: string;
+  slug: string;
+  kind: "Article" | "Interview" | "Column";
   excerpt: string;
   image: string;
-  readingTime: string;
+  readingMinutes: number;
+  publishedAt: string;
+  /** HTML, only on the detail page. */
+  body?: string;
 };
 
-export type MembershipPlan = {
-  id: "hotel" | "supplier";
-  name: string;
-  priceLabel: string;
-  priceNote: string;
-  memberNumber: string;
-  features: string[];
-  highlighted?: boolean;
+/** Fixed lists for filters (GET /meta/options). */
+export type Options = {
+  regions: string[];
+  supplierRegions: string[];
+  vacancyCategories: string[];
+  employmentTypes: string[];
+  supplierCategories: string[];
+  voucherCategories: string[];
+  articleKinds: string[];
 };

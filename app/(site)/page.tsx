@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AboutStory } from "@/component/home/AboutStory";
 import { FeaturedHotels } from "@/component/home/FeaturedHotels";
 import { Hero } from "@/component/home/Hero";
@@ -7,6 +8,9 @@ import { Stories } from "@/component/home/Stories";
 import { SupplierSpotlight } from "@/component/home/SupplierSpotlight";
 import { UrgentVacancies } from "@/component/home/UrgentVacancies";
 import { WaitlistCta } from "@/component/home/WaitlistCta";
+
+// Title, description and share image come from the root layout.
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 export default function HomePage() {
   return (

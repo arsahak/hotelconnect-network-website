@@ -1,18 +1,20 @@
 import type { Metadata } from "next";
-import { LegalPlaceholder } from "@/component/legal/LegalPlaceholder";
+import { LegalDocuments } from "@/component/legal/LegalDocuments";
+import { legalDoc } from "@/lib/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Privacy policy",
-  description: "How HotelConnect Network handles your data: no stored job applications or CVs, and we follow the AVG (GDPR).",
+  description: "How HotelConnect Network handles your data and cookies: our privacy, cookie and disclaimer statements (AVG / GDPR).",
   path: "/privacy",
 });
 
 export default function PrivacyPage() {
   return (
-    <LegalPlaceholder
+    <LegalDocuments
       title="Privacy Policy"
-      summary="Our lawyer is finalising the privacy policy. In short: we never store job applications or CVs, we only use your email address for what you signed up for, and we follow the AVG (GDPR)."
+      intro="We follow the AVG (GDPR). We only use essential cookies, never store job applications or CVs, and only use your email address for what you signed up for. The full statements:"
+      docs={[legalDoc("privacy-cookies"), legalDoc("privacy-disclaimer")]}
     />
   );
 }

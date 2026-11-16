@@ -9,6 +9,8 @@ import { MemberVouchers } from "@/component/vouchers/MemberVouchers";
 import { pageImages } from "@/lib/data/images";
 import { regions as fallbackRegions } from "@/lib/site";
 import { pageMetadata } from "@/lib/seo";
+import { notFound } from "next/navigation";
+import { getCachedSettings } from "@/component/shared/cached-settings";
 
 export const metadata: Metadata = pageMetadata({
   title: "Corporate vouchers",
@@ -22,6 +24,8 @@ export const metadata: Metadata = pageMetadata({
  * supplier, otherwise unlocked with a supplier member number.
  */
 export default async function VouchersPage() {
+  // Phase 2 (Master Briefing v4): no voucher page until an admin switches vouchers on.
+  if (!(await getCachedSettings()).features.vouchers) notFound();
   const options = await getCachedOptions();
 
   return (

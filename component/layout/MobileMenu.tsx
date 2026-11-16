@@ -2,11 +2,9 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { mainNav } from "@/lib/site";
+import type { NavItem } from "@/lib/types";
 import { cn } from "@/lib/cn";
-import { buttonClasses } from "@/component/shared/button-styles";
 import { Icon } from "@/component/shared/Icon";
-import { JoinButton } from "@/component/shared/JoinButton";
 import { setMenuOpen, useMenuOpen } from "./menu-state";
 
 const EASE = "ease-[cubic-bezier(0.22,1,0.36,1)]";
@@ -27,7 +25,7 @@ function MenuIcon({ open }: { open: boolean }) {
  * Hamburger menu for small screens. The panel slides and fades in, the links
  * follow one after another; closing plays it back quickly.
  */
-export function MobileMenu() {
+export function MobileMenu({ items }: { items: NavItem[] }) {
   const open = useMenuOpen();
   const close = () => setMenuOpen(false);
 
@@ -83,7 +81,7 @@ export function MobileMenu() {
         {/* Extra bottom padding: the test-phase bar can push the panel below the viewport. */}
         <nav aria-label="Mobile menu" className="px-4 pt-4 pb-20 sm:px-6">
           <ul className="divide-y divide-line">
-            {mainNav.map((link, index) => (
+            {items.map((link, index) => (
               <li key={link.href} className={item} style={stagger(index)}>
                 <Link
                   href={link.href}
@@ -96,13 +94,6 @@ export function MobileMenu() {
               </li>
             ))}
           </ul>
-
-          <div className={cn("mt-8 grid gap-3", item)} style={stagger(mainNav.length)}>
-            <JoinButton size="lg" className="w-full" />
-            <Link href="/login" onClick={close} className={buttonClasses({ variant: "outline", size: "lg", className: "w-full" })}>
-              Log in
-            </Link>
-          </div>
         </nav>
       </div>
     </div>

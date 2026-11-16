@@ -58,6 +58,21 @@ export function Footer() {
             </nav>
           ))}
 
+          {/* The signed legal documents (PDF): open in a new tab */}
+          <nav aria-label="Legal">
+            <FooterHeading>Legal</FooterHeading>
+            <ul className="mt-5 space-y-3">
+              {legalNav.map((item) => (
+                <li key={item.href}>
+                  <a href={item.href} target="_blank" rel="noopener" className={linkClasses}>
+                    {item.label}
+                    <span className="sr-only"> (PDF, opens in a new tab)</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
           <div className="col-span-2 sm:col-span-1">
             <FooterHeading>Contact</FooterHeading>
             <ul className="mt-5 flex flex-col items-center space-y-3 sm:items-start">
@@ -67,15 +82,9 @@ export function Footer() {
                 </ContactLink>
               </li>
               <li>
-                <ContactLink icon="phone" href={site.phoneHref}>
-                  {site.phone}
+                <ContactLink icon="lock" href="/login">
+                  Log in
                 </ContactLink>
-              </li>
-              <li>
-                <Link href="/about" className="group inline-flex items-center gap-3 text-sm text-white/65 transition-colors hover:text-brass-400">
-                  <ContactIcon icon="users" />
-                  About us
-                </Link>
               </li>
             </ul>
           </div>
@@ -88,16 +97,7 @@ export function Footer() {
           <p>
             © {site.copyrightYear} {site.name}. All rights reserved.
           </p>
-          <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
-            {legalNav.map((item, i) => (
-              <li key={item.href} className="flex items-center gap-4">
-                {i > 0 && <span className="size-1.5 rounded-full bg-brass-500/60" aria-hidden="true" />}
-                <Link href={item.href} className="transition-colors hover:text-brass-400">
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <p>0% commission · Built by hoteliers, for hoteliers</p>
         </Container>
       </div>
     </footer>

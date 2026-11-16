@@ -11,13 +11,25 @@ export type RegistrationInput = {
   email: string;
   phone: string;
   password: string;
+  /** Country_Tag (ISO code), hotels and suppliers. */
+  country: string;
+  /** "I agree to the Terms & Conditions and Privacy Policy" — must be true. */
+  acceptTerms: boolean;
+  legalName?: string;
+  vatNumber?: string;
   address?: string;
+  postalCode?: string;
   city?: string;
   region?: string;
+  rooms?: number;
+  billingEmail?: string;
+  bookingUrl?: string;
   categories?: string[];
   regions?: string[];
   plan?: "contract" | "commission";
   website?: string;
+  /** Token from a hotel's 1-click invite link. */
+  invite?: string;
 };
 
 /**

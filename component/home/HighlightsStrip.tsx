@@ -5,7 +5,7 @@ const highlights: { icon: IconName; title: string; text: string }[] = [
   { icon: "shield-check", title: "Compliance Radar", text: "Contracts & permits with reminders" },
   { icon: "file", title: "Tenders", text: "Quotes from verified suppliers" },
   { icon: "briefcase", title: "Jobs", text: "Apply in one click via WhatsApp" },
-  { icon: "zap", title: "Group Purchasing", text: "Buy energy together, save more" },
+  { icon: "users", title: "Floor Control", text: "4 departments, every language" },
 ];
 
 /** Four key features right under the hero. */

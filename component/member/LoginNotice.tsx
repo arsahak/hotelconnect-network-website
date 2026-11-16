@@ -7,8 +7,8 @@ import { cn } from "@/lib/cn";
 const MESSAGES: Record<string, string> = {
   failed: "We could not sign you in. Please try again.",
   "not-supplier":
-    "Only supplier accounts can book vouchers. You are signed in to the dashboard with another kind of account.",
-  required: "Please log in as a supplier to book this voucher.",
+    "This is for supplier accounts. You are signed in to the dashboard with another kind of account.",
+  required: "Please log in as a supplier first.",
 };
 
 /** Shows why a supplier sign-in did not work (?login=… after the dashboard sends them back). */

@@ -25,7 +25,7 @@ export async function UrgentVacancies() {
           id="vacancies-title"
           eyebrow="Jobs"
           title="Who's Hiring Right Now"
-          description="The most urgent jobs at member hotels. Apply in one click, no account needed."
+          description="The most urgent jobs at member hotels and their suppliers. Apply in one click, no account needed."
           action={
             <ButtonLink href="/jobs" variant="outline">
               View all jobs

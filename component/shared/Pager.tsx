@@ -8,21 +8,27 @@ export function Pager({
   pages,
   basePath,
   query,
+  pageKey = "page",
+  hash,
 }: {
   page: number;
   pages: number;
   basePath: string;
   /** The current filters (without page). */
   query: Record<string, string | undefined>;
+  /** URL name of the page number, when a page has two lists. */
+  pageKey?: string;
+  /** Jump back to this list after paging, e.g. "hotel-jobs". */
+  hash?: string;
 }) {
   if (pages <= 1) return null;
 
   const href = (target: number) => {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(query)) if (value) params.set(key, value);
-    if (target > 1) params.set("page", String(target));
+    if (target > 1) params.set(pageKey, String(target));
     const qs = params.toString();
-    return `${basePath}${qs ? `?${qs}` : ""}`;
+    return `${basePath}${qs ? `?${qs}` : ""}${hash ? `#${hash}` : ""}`;
   };
 
   const linkClass = (disabled: boolean) =>

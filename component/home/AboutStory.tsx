@@ -1,16 +1,13 @@
 import Image from "next/image";
 import { homeImages } from "@/lib/data/images";
-import { site } from "@/lib/site";
-import { ButtonLink } from "@/component/shared/ButtonLink";
-import { Icon } from "@/component/shared/Icon";
 import { Eyebrow } from "@/component/shared/Eyebrow";
 import { sectionTitleClasses } from "@/component/shared/SectionHeading";
 import { cn } from "@/lib/cn";
 
-/** Photo / text split about who is behind the platform. "About us" goes to /about. */
+/** Photo / text split: the single "Our story" section (Master Briefing v4, corporate voice). */
 export function AboutStory() {
   return (
-    <section aria-labelledby="about-title" className="grid bg-sand lg:grid-cols-2">
+    <section id="our-story" aria-labelledby="about-title" className="grid scroll-mt-24 bg-sand lg:grid-cols-2">
       <div className="relative aspect-[16/10] lg:aspect-auto lg:min-h-[30rem]">
         <Image
           src={homeImages.about}
@@ -28,30 +25,19 @@ export function AboutStory() {
             Built by Hoteliers, for Hoteliers
           </h2>
           <p className="mt-5 text-[0.9375rem] leading-relaxed text-ink-500">
-            {site.founders.join(" and ")} know the hotel world from the inside. They are building
-            the platform they always wished they had: one place for everything that keeps a
-            boutique hotel running, so there is more time for guests.
+            We know the hospitality industry from the inside out. Having managed daily operations on the hotel floor
+            ourselves, we saw firsthand how much time gets lost to scattered paperwork, compliance stress, and high
+            commission platforms.
           </p>
-
-          <div className="mt-8 flex flex-wrap items-center gap-6">
-            <ButtonLink href="/about">
-              About us
-              <Icon name="arrow-right" size={16} />
-            </ButtonLink>
-            <div className="flex items-center gap-3">
-              <div className="flex -space-x-2" aria-hidden="true">
-                {site.founders.map((name) => (
-                  <span
-                    key={name}
-                    className="grid size-10 place-items-center rounded-full border-2 border-sand bg-brass-100 font-display text-lg text-brass-600"
-                  >
-                    {name[0]}
-                  </span>
-                ))}
-              </div>
-              <p className="text-sm text-ink-700">{site.founders.join(" & ")}, founders</p>
-            </div>
-          </div>
+          <p className="mt-4 text-[0.9375rem] leading-relaxed text-ink-500">
+            That is why we built HotelConnect Network: one clear, practical workspace designed to protect boutique hotels
+            from inspection fines, simplify communication across all departments, and connect independent properties
+            with trusted local suppliers — with zero commission.
+          </p>
+          <p className="mt-8 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-medium text-brass-700 ring-1 ring-brass-500/30">
+            <span className="size-1.5 rounded-full bg-brass-500" aria-hidden="true" />
+            0% Commission Boutique Network
+          </p>
         </div>
       </div>
     </section>

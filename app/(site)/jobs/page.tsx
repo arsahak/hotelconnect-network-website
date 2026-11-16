@@ -9,33 +9,30 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Jobs",
-  description: "Jobs at boutique hotels in the Netherlands. Apply in one click via WhatsApp or email — no account needed.",
+  description: "Jobs at independent boutique hotels and their suppliers. Apply in one click via WhatsApp or email — no account needed.",
   path: "/jobs",
 });
 
-/** Jobs page (briefing §2.2): every published job of the member hotels. */
+/** Jobs page (briefing §2.2; client 31 Oct): jobs at member hotels and at suppliers with a maintenance contract. */
 export default function JobsPage({ searchParams }: PageProps<"/jobs">) {
   return (
     <>
       <PageHero
         eyebrow="Jobs"
-        title="Work at a Boutique Hotel"
-        description="Kitchen, front office, housekeeping and more. Apply in one click via WhatsApp or email, or send your CV — no account needed."
+        title="Work in Hospitality"
+        description="Jobs at boutique hotels and at the companies that keep them running. Apply in one click via WhatsApp or email, or send your CV — no account needed."
         image={pageImages.jobs}
       />
-      <section aria-labelledby="jobs-title" className="bg-cream pb-24">
-        <h2 id="jobs-title" className="sr-only">
-          Open jobs
-        </h2>
+      <div className="bg-cream pb-24">
         <Container>
           <Suspense fallback={<div className="pt-28"><ListSkeleton tall={false} /></div>}>
             <JobBoard searchParams={searchParams} />
           </Suspense>
           <p className="mt-10 flex items-start gap-2 text-[0.8125rem] text-ink-500 sm:items-center">
-            HotelConnect does not store applications or CVs — they go straight to the hotel.
+            HotelConnect does not store applications or CVs — they go straight to the hotel or company.
           </p>
         </Container>
-      </section>
+      </div>
     </>
   );
 }

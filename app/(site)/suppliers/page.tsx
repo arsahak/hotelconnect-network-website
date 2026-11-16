@@ -13,19 +13,20 @@ import { SupplierDirectory } from "@/component/suppliers/SupplierDirectory";
 import { VoucherSlideshow } from "@/component/vouchers/VoucherSlideshow";
 import { pageImages } from "@/lib/data/images";
 import { pageMetadata } from "@/lib/seo";
+import { getCachedSettings } from "@/component/shared/cached-settings";
 
 export const metadata: Metadata = pageMetadata({
   title: "Suppliers",
   description:
-    "The supplier directory of HotelConnect, corporate vouchers from member hotels, and why suppliers join the network.",
+    "The supplier directory of HotelConnect Network, open tenders from boutique hotels, and why suppliers join: free until 1 May 2028, 0% commission.",
   path: "/suppliers",
 });
 
 const benefits: { icon: IconName; title: string; text: string }[] = [
   { icon: "bell", title: "Requests, not cold calls", text: "Get an invitation for every tender in your category and region." },
-  { icon: "users", title: "Your own profile", text: "Be found in the directory by boutique hotels across the Netherlands." },
-  { icon: "star", title: "Good work is seen", text: "Hotels rate every job; strong reviews move you up the ranking." },
-  { icon: "tag", title: "Corporate vouchers", text: "Book meetings, stays and dinners at member hotels with a discount." },
+  { icon: "users", title: "Your own profile", text: "Be found in the directory by independent boutique hotels." },
+  { icon: "sparkles", title: "Free until 1 May 2028", text: "No membership fee until then. After that from €19 a month, billed yearly." },
+  { icon: "tag", title: "0% commission", text: "Win a job, keep the full amount. We never take a cut of your work." },
 ];
 
 /**
@@ -38,10 +39,10 @@ export default function SuppliersPage({ searchParams }: PageProps<"/suppliers">)
       <PageHero
         eyebrow="For suppliers"
         title="Work with Boutique Hotels"
-        description="A private network where boutique hotels find trusted suppliers. Register for free and pay commission only when you win a job, or join with a maintenance contract from €49 a month."
+        description="A private network where independent boutique hotels find trusted suppliers. Free until 1 May 2028 and 0% commission on every job."
         image={pageImages.suppliers}
       >
-        <JoinButton size="lg">
+        <JoinButton size="lg" tab="supplier">
           Join as a supplier
           <Icon name="arrow-right" size={17} />
         </JoinButton>
@@ -74,6 +75,53 @@ export default function SuppliersPage({ searchParams }: PageProps<"/suppliers">)
       </section>
 
       {/* Corporate vouchers */}
+      <VoucherSection />
+
+      {/* Tender teaser */}
+      <section aria-label="Tenders" className="bg-ink-900 py-14 text-white">
+        <Container className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+          <div className="flex items-start gap-4">
+            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white/10 text-brass-400">
+              <Icon name="lock" size={20} />
+            </span>
+            <div>
+              <h2 className="font-display text-2xl">Log in to see tenders in your category and region</h2>
+              <p className="mt-1 text-sm text-white/70">Hotels send each tender to at most three matching suppliers.</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <ButtonLink href="/login" variant="light">
+              Log in
+            </ButtonLink>
+            <JoinButton variant="outline-light" tab="supplier" />
+          </div>
+        </Container>
+      </section>
+
+      {/* Directory */}
+      <section id="directory" aria-labelledby="directory-title" className="scroll-mt-24 bg-cream py-20 lg:py-24">
+        <Container>
+          <SectionHeading
+            id="directory-title"
+            eyebrow="Directory"
+            title="Suppliers in the Network"
+            description="Every supplier is checked before joining. Click a name for the full profile."
+            className="mb-10"
+          />
+          <Suspense fallback={<ListSkeleton tall={false} />}>
+            <SupplierDirectory searchParams={searchParams} />
+          </Suspense>
+        </Container>
+      </section>
+    </>
+  );
+}
+
+/** Corporate vouchers (briefing §2.4) — Phase 2 (Master Briefing v4): hidden until an admin switches vouchers on. */
+async function VoucherSection() {
+  const { features } = await getCachedSettings();
+  if (!features.vouchers) return null;
+  return (
       <section id="vouchers" aria-labelledby="vouchers-title" className="scroll-mt-24 bg-cream py-20 lg:py-24">
         <Container>
           <SectionHeading
@@ -98,43 +146,5 @@ export default function SuppliersPage({ searchParams }: PageProps<"/suppliers">)
           </Suspense>
         </Container>
       </section>
-
-      {/* Tender teaser */}
-      <section aria-label="Tenders" className="bg-ink-900 py-14 text-white">
-        <Container className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-          <div className="flex items-start gap-4">
-            <span className="grid size-12 shrink-0 place-items-center rounded-full bg-white/10 text-brass-400">
-              <Icon name="lock" size={20} />
-            </span>
-            <div>
-              <h2 className="font-display text-2xl">Log in to see tenders in your category and region</h2>
-              <p className="mt-1 text-sm text-white/70">Hotels send each tender to at most three matching suppliers.</p>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <ButtonLink href="/login" variant="light">
-              Log in
-            </ButtonLink>
-            <JoinButton variant="outline-light" />
-          </div>
-        </Container>
-      </section>
-
-      {/* Directory */}
-      <section id="directory" aria-labelledby="directory-title" className="scroll-mt-24 bg-cream py-20 lg:py-24">
-        <Container>
-          <SectionHeading
-            id="directory-title"
-            eyebrow="Directory"
-            title="Suppliers in the Network"
-            description="Every supplier is checked before joining. Click a name for the full profile."
-            className="mb-10"
-          />
-          <Suspense fallback={<ListSkeleton tall={false} />}>
-            <SupplierDirectory searchParams={searchParams} />
-          </Suspense>
-        </Container>
-      </section>
-    </>
   );
 }

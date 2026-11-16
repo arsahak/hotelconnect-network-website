@@ -5,14 +5,24 @@ import { EmptyState } from "@/component/shared/EmptyState";
 import { Pager } from "@/component/shared/Pager";
 import { VacancyCard } from "@/component/shared/VacancyCard";
 
-/** Job cards for the current filters, urgent first. */
-export async function JobResults({ filters }: { filters: VacancyFilters }) {
+/** Job cards of one list (hotel or supplier jobs) for the current filters, urgent first. */
+export async function JobResults({
+  employer,
+  filters,
+  query,
+}: {
+  employer: "hotel" | "supplier";
+  filters: VacancyFilters;
+  /** Everything else in the URL, kept when paging. */
+  query: Record<string, string | undefined>;
+}) {
   "use cache";
   cacheLife("minutes");
   cacheTag("vacancies");
 
-  const res = await listVacanciesAction({ ...filters, limit: 12 });
+  const res = await listVacanciesAction({ ...filters, employer, limit: 9 });
   const result = res.data;
+  const where = employer === "hotel" ? "hotels" : "suppliers";
 
   if (!res.ok || !result) {
     return (
@@ -26,10 +36,10 @@ export async function JobResults({ filters }: { filters: VacancyFilters }) {
     return (
       <EmptyState
         icon="briefcase"
-        title="No jobs found"
-        action={<ButtonLink href="/jobs" variant="outline">Show all jobs</ButtonLink>}
+        title={`No jobs at ${where} found`}
+        action={<ButtonLink href={`/jobs#${employer}-jobs`} variant="outline">Show all jobs</ButtonLink>}
       >
-        Try another category or region, or come back soon — hotels add new jobs every week.
+        Try another category or region, or come back soon — new jobs are added every week.
       </EmptyState>
     );
   }
@@ -44,12 +54,7 @@ export async function JobResults({ filters }: { filters: VacancyFilters }) {
           <VacancyCard key={vacancy._id} vacancy={vacancy} />
         ))}
       </div>
-      <Pager
-        page={result.page}
-        pages={result.pages}
-        basePath="/jobs"
-        query={{ category: filters.category, region: filters.region, q: filters.q }}
-      />
+      <Pager page={result.page} pages={result.pages} basePath="/jobs" query={query} pageKey={employer === "hotel" ? "hpage" : "spage"} hash={`${employer}-jobs`} />
     </>
   );
 }

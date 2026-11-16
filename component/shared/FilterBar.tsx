@@ -32,12 +32,18 @@ export function FilterBar({
   action,
   fields,
   hasFilters,
+  keep,
+  clearHref,
 }: {
   /** The page path, e.g. "/hotels". */
   action: string;
   fields: FilterField[];
   /** Shows a "Clear filters" link. */
   hasFilters: boolean;
+  /** Other URL values to keep when this form is sent (e.g. the filters of another list on the page). */
+  keep?: Record<string, string | undefined>;
+  /** Where "Clear" goes (default: `action`). */
+  clearHref?: string;
 }) {
   // Re-mount after every search, so the dropdowns show the values in the URL.
   const formKey = fields.map((field) => field.value ?? "").join("|");
@@ -49,6 +55,7 @@ export function FilterBar({
       role="search"
       className="grid gap-1 rounded-xl bg-white p-2.5 shadow-[0_10px_40px_-18px_rgba(27,22,17,0.35)] ring-1 ring-line lg:grid-flow-col lg:auto-cols-fr lg:items-center lg:divide-x lg:divide-line lg:p-3"
     >
+      {Object.entries(keep ?? {}).map(([name, value]) => (value ? <input key={name} type="hidden" name={name} value={value} /> : null))}
       {fields.map((field) => {
         const id = `filter-${field.name}`;
         return (
@@ -96,7 +103,7 @@ export function FilterBar({
           Search
         </button>
         {hasFilters && (
-          <Link href={action} className="text-sm whitespace-nowrap text-ink-500 underline-offset-4 hover:text-brass-600 hover:underline">
+          <Link href={clearHref ?? action} className="text-sm whitespace-nowrap text-ink-500 underline-offset-4 hover:text-brass-600 hover:underline">
             Clear
           </Link>
         )}

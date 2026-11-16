@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { CookieBanner } from "@/component/layout/CookieBanner";
 import { Footer } from "@/component/layout/Footer";
 import { Navbar } from "@/component/layout/Navbar";
 import { TestPhaseBar } from "@/component/layout/TestPhaseBar";
@@ -22,6 +23,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
         {children}
       </main>
       <Footer />
+      <CookieBanner />
     </PlatformProvider>
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Vacancy } from "@/lib/types";
 import { emailApplyUrl, whatsappApplyUrl } from "@/lib/apply-links";
 import { cn } from "@/lib/cn";
+import { employerOf } from "@/lib/employer";
 import { formatDate } from "@/lib/format";
 import { Badge } from "./Badge";
 import { buttonClasses } from "./button-styles";
@@ -33,12 +34,12 @@ export function VacancyCard({ vacancy, className }: { vacancy: Vacancy; classNam
           {vacancy.title}
         </Link>
       </h3>
-      <p className="mt-1 text-sm text-ink-700">{vacancy.hotel.name}</p>
+      <p className="mt-1 text-sm text-ink-700">{employerOf(vacancy).name}</p>
 
       <ul className="mt-5 space-y-2 border-t border-line pt-5 text-[0.8125rem] text-ink-500">
         <li className="flex items-center gap-2">
           <Icon name="map-pin" size={15} className="text-brass-500" />
-          {vacancy.city}, {vacancy.region}
+          {[vacancy.city, vacancy.region].filter(Boolean).join(", ")}
         </li>
         <li className="flex items-center gap-2">
           <Icon name="briefcase" size={15} className="text-brass-500" />

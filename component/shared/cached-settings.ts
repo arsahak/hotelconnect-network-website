@@ -11,5 +11,10 @@ export async function getCachedSettings() {
   cacheLife("minutes");
   cacheTag("settings");
   const res = await getPlatformSettingsAction();
-  return { testPhase: res.data?.testPhase ?? true };
+  const f = res.data?.features;
+  // Phase 2 features stay hidden unless the API says they are on.
+  return {
+    testPhase: res.data?.testPhase ?? true,
+    features: { vouchers: Boolean(f?.vouchers), advertising: Boolean(f?.advertising), reviews: Boolean(f?.reviews) },
+  };
 }

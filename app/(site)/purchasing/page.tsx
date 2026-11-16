@@ -8,6 +8,7 @@ import { ListSkeleton } from "@/component/shared/ListSkeleton";
 import { PageHero } from "@/component/shared/PageHero";
 import { SectionHeading } from "@/component/shared/SectionHeading";
 import { pageImages } from "@/lib/data/images";
+import { webshopGroups } from "@/lib/data/webshops";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -43,7 +44,44 @@ export default function PurchasingPage() {
         </Container>
       </section>
 
-      <section aria-labelledby="webshop-title" className="bg-cream pb-24">
+      <section aria-labelledby="wholesalers-title" className="bg-sand py-20 lg:py-24">
+        <Container>
+          <SectionHeading
+            id="wholesalers-title"
+            eyebrow="Wholesalers & webshops"
+            title="Where Hotels Buy"
+            description="The wholesalers and webshops hotels order from every day, by category. Each link opens the webshop in a new tab."
+            className="mb-12"
+          />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {webshopGroups.map((group) => (
+              <div key={group.category} className="reveal rounded-lg bg-white p-6 shadow-sm">
+                <h3 className="font-display text-xl text-ink-950">{group.category}</h3>
+                <ul className="mt-4 divide-y divide-line">
+                  {group.shops.map((shop) => (
+                    <li key={shop.url}>
+                      <a
+                        href={shop.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex items-center justify-between gap-3 py-3 text-[0.9375rem] text-ink-700 transition-colors hover:text-brass-600"
+                      >
+                        <span>
+                          {shop.name}
+                          <span className="block text-xs text-ink-500">{new URL(shop.url).hostname.replace(/^www\./, "")}</span>
+                        </span>
+                        <Icon name="arrow-up-right" size={16} className="shrink-0 text-brass-500 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section aria-labelledby="webshop-title" className="bg-cream py-24">
         <Container>
           <div className="reveal relative isolate overflow-hidden rounded-2xl bg-ink-900 p-8 text-white sm:p-12 lg:p-16">
             <div className="pointer-events-none absolute -top-24 -right-24 -z-10 size-80 rounded-full bg-brass-500/20 blur-3xl" />

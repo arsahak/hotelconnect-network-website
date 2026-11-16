@@ -10,6 +10,7 @@ import { emailApplyUrl, whatsappApplyUrl } from "@/lib/apply-links";
 import { formatDate } from "@/lib/format";
 import { videoEmbedUrl } from "@/lib/video";
 import { JobApplicationForm } from "./JobApplicationForm";
+import { employerOf } from "@/lib/employer";
 
 /**
  * One job: details on the left, the three ways to apply on the right.
@@ -24,14 +25,15 @@ export async function JobDetails({ params }: { params: Promise<{ slug: string }>
 
   const visual = vacancy.style === "visual";
   const video = visual ? videoEmbedUrl(vacancy.videoUrl) : null;
-  const headerPhoto = (visual && vacancy.image) || vacancy.hotel.image;
+  const employer = employerOf(vacancy);
+  const headerPhoto = (visual && vacancy.image) || employer.image;
   const whatsappFirst = visual && Boolean(vacancy.applyWhatsapp);
 
   const facts: { icon: IconName; label: string; value: string }[] = [
-    { icon: "building", label: "Hotel", value: vacancy.hotel.name },
-    { icon: "map-pin", label: "Location", value: `${vacancy.city}, ${vacancy.region}` },
-    { icon: "briefcase", label: "Category", value: vacancy.category },
-    { icon: "clock", label: "Type", value: vacancy.employmentType },
+    { icon: "building", label: employer.label, value: employer.name },
+    { icon: "map-pin", label: "Location", value: [vacancy.city, vacancy.region].filter(Boolean).join(", ") },
+    { icon: "briefcase", label: "Department", value: vacancy.category },
+    { icon: "clock", label: "Hours", value: [vacancy.employmentType, vacancy.hours].filter(Boolean).join(" · ") },
     { icon: "calendar", label: "Posted", value: formatDate(vacancy.publishedAt) },
   ];
 
@@ -58,7 +60,7 @@ export async function JobDetails({ params }: { params: Promise<{ slug: string }>
             {vacancy.title}
           </h1>
           <p className="mt-3 text-white/80">
-            {vacancy.hotel.name} · {vacancy.city}
+            {employer.name} · {vacancy.city}
           </p>
         </Container>
       </section>
@@ -85,7 +87,7 @@ export async function JobDetails({ params }: { params: Promise<{ slug: string }>
               <div className="mt-10 aspect-video overflow-hidden rounded-xl bg-ink-950 shadow-[0_10px_40px_-18px_rgba(27,22,17,0.45)]">
                 <iframe
                   src={video}
-                  title={`Video: ${vacancy.title} at ${vacancy.hotel.name}`}
+                  title={`Video: ${vacancy.title} at ${employer.name}`}
                   className="h-full w-full"
                   loading="lazy"
                   allow="accelerometer; encrypted-media; gyroscope; picture-in-picture; fullscreen"
@@ -95,16 +97,19 @@ export async function JobDetails({ params }: { params: Promise<{ slug: string }>
             )}
 
             <h2 className="mt-10 font-display text-3xl text-ink-950">About the job</h2>
-            <div className="mt-4 space-y-4 text-[0.9375rem] leading-relaxed whitespace-pre-line text-ink-700">
-              {vacancy.description || "The hotel will tell you more when you get in touch."}
-            </div>
+            {vacancy.description ? (
+              // Rich text, cleaned by the API when saved (bold, italic, lists, links only).
+              <div className="job-text mt-4 text-[0.9375rem] leading-relaxed text-ink-700" dangerouslySetInnerHTML={{ __html: vacancy.description }} />
+            ) : (
+              <p className="mt-4 text-[0.9375rem] leading-relaxed text-ink-700">The hotel will tell you more when you get in touch.</p>
+            )}
           </div>
 
           {/* Apply */}
           <aside className="lg:col-span-5">
             <div className="rounded-xl bg-white p-6 shadow-[0_10px_40px_-18px_rgba(27,22,17,0.35)] ring-1 ring-line sm:p-8 lg:sticky lg:top-28">
               <h2 className="font-display text-2xl text-ink-950">Apply in one click</h2>
-              <p className="mt-1 text-sm text-ink-500">Send a message straight to {vacancy.hotel.name}.</p>
+              <p className="mt-1 text-sm text-ink-500">Send a message straight to {employer.name}.</p>
               {whatsappFirst && (
                 <a
                   href={whatsappApplyUrl(vacancy)}
@@ -143,7 +148,7 @@ export async function JobDetails({ params }: { params: Promise<{ slug: string }>
                     <Icon name="chevron-down" size={17} className="transition-transform group-open:rotate-180" />
                   </summary>
                   <div className="mt-5">
-                    <JobApplicationForm slug={vacancy.slug} hotelName={vacancy.hotel.name} />
+                    <JobApplicationForm slug={vacancy.slug} hotelName={employer.name} />
                   </div>
                 </details>
               ) : (
@@ -153,7 +158,7 @@ export async function JobDetails({ params }: { params: Promise<{ slug: string }>
                     or send your CV
                     <span className="h-px flex-1 bg-line" />
                   </div>
-                  <JobApplicationForm slug={vacancy.slug} hotelName={vacancy.hotel.name} />
+                  <JobApplicationForm slug={vacancy.slug} hotelName={employer.name} />
                 </>
               )}
             </div>

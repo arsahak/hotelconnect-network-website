@@ -40,26 +40,32 @@ export function Hero() {
           <h1
             id="hero-title"
             // Gilda Display has no bold weight, so a thin text-stroke makes the letters heavier.
-            className="animate-hero-in font-display text-[2.75rem] leading-[1.1] text-balance [-webkit-text-stroke:1px_currentColor] sm:text-6xl lg:text-[4rem] lg:[-webkit-text-stroke:1.4px_currentColor]"
+            className="animate-hero-in font-display text-[2.5rem] leading-[1.1] text-balance [-webkit-text-stroke:1px_currentColor] sm:text-6xl lg:text-[4rem] lg:[-webkit-text-stroke:1.4px_currentColor]"
           >
-            <span className="block">Where guests feel at home.</span>
-            <span className="block">And you feel supported.</span>
+            Less admin, full compliance, and more time for your guests.
           </h1>
           <Eyebrow tone="light" centered className="mt-6 animate-hero-in [animation-delay:120ms]">
             {site.name}
           </Eyebrow>
           <p className="mx-auto mt-5 max-w-2xl animate-hero-in text-[0.9375rem] leading-relaxed text-white/85 [animation-delay:240ms] sm:text-base">
-            The network that connects the best suppliers and skilled people — simplifying your work
-            and turning your collective purchasing power into real savings.
+            The digital cockpit for independent boutique hotels. Streamline daily operations for Housekeeping,
+            Maintenance, Front Office, and F&amp;B — stay 100% inspection-proof, and join our 0% Commission Hotel
+            Network.
           </p>
-          <div className="mt-9 flex animate-hero-in flex-col justify-center gap-3 [animation-delay:360ms] sm:flex-row">
-            <JoinButton size="lg">
-              Become a member
-              <Icon name="arrow-right" size={17} />
-            </JoinButton>
-            <ButtonLink href="/hotels" variant="outline-light" size="lg">
-              Book a hotel
+          {/* Master Briefing v4: Log in and Join live here, not in the header. */}
+          <div className="mt-9 flex animate-hero-in flex-col justify-center gap-3 [animation-delay:360ms] sm:flex-row sm:flex-wrap">
+            <ButtonLink href="/login" variant="outline-light" size="lg">
+              <Icon name="lock" size={17} />
+              Log in
             </ButtonLink>
+            <ButtonLink href="/hotels" variant="outline-light" size="lg">
+              <Icon name="building" size={17} />
+              Book a Hotel
+            </ButtonLink>
+            <JoinButton size="lg">
+              <Icon name="mail" size={17} />
+              Join as Hotel / Supplier
+            </JoinButton>
           </div>
         </div>
       </Container>

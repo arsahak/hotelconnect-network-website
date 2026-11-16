@@ -5,7 +5,7 @@ import { registerAction, type RegistrationInput } from "@/app/actions/register";
 import { buttonClasses } from "@/component/shared/button-styles";
 import { Icon } from "@/component/shared/Icon";
 import { cn } from "@/lib/cn";
-import { membershipPlans, site } from "@/lib/site";
+import { hotelTiers, legalDoc, membershipPlans, site } from "@/lib/site";
 
 type Type = RegistrationInput["type"];
 type Plan = NonNullable<RegistrationInput["plan"]>;
@@ -37,21 +37,32 @@ function Chips({ options, value, onChange }: { options: string[]; value: string[
   );
 }
 
+/** Rooms → price tier (Master Briefing v4): ≤15 small, 16–40 medium, 40+ large. */
+function tierFor(rooms: number) {
+  if (!rooms || rooms < 1) return null;
+  return rooms <= 15 ? hotelTiers[0] : rooms <= 40 ? hotelTiers[1] : hotelTiers[2];
+}
+
 /**
- * Sign-up form for hotels and suppliers (briefing §3.1, §4.1): company name,
- * KVK, contact and general email, plus the address (hotels) or categories,
- * regions and plan (suppliers). HotelConnect approves every member.
+ * Sign-up form for hotels and suppliers. Hotels: the 7-field form of Master
+ * Briefing v4 (names, KvK, VAT, address + country, rooms → tier, general +
+ * billing email, booking URL); no IBAN. Suppliers: company, country, trades,
+ * regions and plan. Everyone ticks the T&C box. HotelConnect approves every member.
  */
 export function RegisterForm({
   initialType,
   initialPlan,
   regions,
+  countries,
   supplierRegions,
   supplierCategories,
+  invite,
 }: {
+  invite?: string;
   initialType: Type;
   initialPlan: Plan;
   regions: string[];
+  countries: { code: string; name: string }[];
   supplierRegions: string[];
   supplierCategories: string[];
 }) {
@@ -59,6 +70,10 @@ export function RegisterForm({
   const [plan, setPlan] = useState<Plan>(initialPlan);
   const [categories, setCategories] = useState<string[]>([]);
   const [serviceRegions, setServiceRegions] = useState<string[]>([]);
+  const [country, setCountry] = useState("NL");
+  const [rooms, setRooms] = useState(0);
+  const dutch = country === "NL";
+  const tier = tierFor(rooms);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -100,9 +115,21 @@ export function RegisterForm({
           email: get("email"),
           phone: get("phone"),
           password: get("password"),
+          country,
+          acceptTerms: form.get("acceptTerms") === "on",
           ...(type === "hotel"
-            ? { address: get("address"), city: get("city"), region: get("region") }
-            : { categories, regions: serviceRegions, plan, website: get("website") }),
+            ? {
+                legalName: get("legalName"),
+                vatNumber: get("vatNumber"),
+                address: get("address"),
+                postalCode: get("postalCode"),
+                city: get("city"),
+                ...(dutch ? { region: get("region") } : {}),
+                rooms: Number(get("rooms")),
+                billingEmail: get("billingEmail"),
+                bookingUrl: get("bookingUrl"),
+              }
+            : { categories, regions: serviceRegions, plan, website: get("website"), ...(invite ? { invite } : {}) }),
         };
         startTransition(async () => {
           const res = await registerAction(data);
@@ -114,6 +141,12 @@ export function RegisterForm({
       }}
       className="rounded-xl bg-white p-6 shadow-[0_10px_40px_-18px_rgba(27,22,17,0.35)] ring-1 ring-line sm:p-10"
     >
+      {invite && type === "supplier" && (
+        <p className="mb-6 flex items-start gap-2.5 rounded-md bg-moss-100/70 px-4 py-3 text-sm text-ink-700">
+          <Icon name="sparkles" size={17} className="mt-0.5 shrink-0 text-moss-600" />
+          A hotel invited you as its trusted partner. Register for free (until 1 May 2028) and it appears under My Partner Hotels.
+        </p>
+      )}
       <fieldset>
         <legend className={label}>I register as</legend>
         <div className="grid grid-cols-2 gap-2">
@@ -164,53 +197,99 @@ export function RegisterForm({
       )}
 
       <div className="mt-8 grid gap-5 sm:grid-cols-2">
-        <div className="sm:col-span-2">
-          <label htmlFor="r-company" className={label}>{type === "hotel" ? "Hotel name" : "Company name"}</label>
+        <div className={type === "hotel" ? undefined : "sm:col-span-2"}>
+          <label htmlFor="r-company" className={label}>{type === "hotel" ? "Official hotel name" : "Company name"}</label>
           <input id="r-company" name="companyName" required minLength={2} maxLength={120} className={field} />
         </div>
+        {type === "hotel" && (
+          <div>
+            <label htmlFor="r-legal" className={label}>Legal company name</label>
+            <input id="r-legal" name="legalName" maxLength={120} autoComplete="organization" placeholder="e.g. Canal House B.V." className={field} />
+          </div>
+        )}
         <div>
-          <label htmlFor="r-kvk" className={label}>KVK number</label>
-          <input id="r-kvk" name="kvkNumber" required inputMode="numeric" pattern="[0-9 ]{8,10}" title="8 digits" placeholder="12345678" className={field} />
+          <label htmlFor="r-country" className={label}>Country</label>
+          <select id="r-country" name="country" value={country} onChange={(e) => setCountry(e.target.value)} className={field}>
+            {countries.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
-          <label htmlFor="r-phone" className={label}>Phone</label>
-          <input id="r-phone" name="phone" type="tel" autoComplete="tel" className={field} />
-        </div>
-        <div>
-          <label htmlFor="r-first" className={label}>First name (contact person)</label>
-          <input id="r-first" name="contactFirstName" required autoComplete="given-name" className={field} />
-        </div>
-        <div>
-          <label htmlFor="r-last" className={label}>Last name</label>
-          <input id="r-last" name="contactLastName" autoComplete="family-name" className={field} />
+          <label htmlFor="r-kvk" className={label}>{dutch ? "KvK number" : "Company registration number"}</label>
+          <input
+            id="r-kvk"
+            name="kvkNumber"
+            required
+            {...(dutch
+              ? { inputMode: "numeric" as const, pattern: "[0-9 ]{8,10}", title: "8 digits", placeholder: "12345678" }
+              : { pattern: "[A-Za-z0-9.\\- ]{4,24}", title: "4–20 letters or digits" })}
+            className={field}
+          />
         </div>
 
         {type === "hotel" ? (
           <>
+            <div>
+              <label htmlFor="r-vat" className={label}>VAT number</label>
+              <input id="r-vat" name="vatNumber" required pattern="[A-Za-z]{2}[A-Za-z0-9 .]{2,16}" title="Country code + number, e.g. NL123456789B01" placeholder={`${country}123456789B01`} className={field} />
+            </div>
+            <div>
+              <label htmlFor="r-rooms" className={label}>Number of rooms</label>
+              <input
+                id="r-rooms"
+                name="rooms"
+                type="number"
+                required
+                min={1}
+                max={5000}
+                inputMode="numeric"
+                onChange={(e) => setRooms(Number(e.target.value))}
+                aria-describedby="r-rooms-tier"
+                className={field}
+              />
+              <p id="r-rooms-tier" aria-live="polite" className="mt-1 text-xs text-ink-500">
+                {tier ? (
+                  <>
+                    <span className="font-medium text-brass-700">{tier.name}</span> · {tier.price} per year
+                  </>
+                ) : (
+                  "Decides your membership tier."
+                )}
+              </p>
+            </div>
             <div className="sm:col-span-2">
-              <label htmlFor="r-address" className={label}>Address</label>
+              <label htmlFor="r-address" className={label}>Street and number</label>
               <input id="r-address" name="address" required autoComplete="street-address" className={field} />
+            </div>
+            <div>
+              <label htmlFor="r-postal" className={label}>Postal code</label>
+              <input id="r-postal" name="postalCode" required maxLength={12} autoComplete="postal-code" className={field} />
             </div>
             <div>
               <label htmlFor="r-city" className={label}>City</label>
               <input id="r-city" name="city" required autoComplete="address-level2" className={field} />
             </div>
-            <div>
-              <label htmlFor="r-region" className={label}>Province</label>
-              <select id="r-region" name="region" required defaultValue="" className={field}>
-                <option value="" disabled>
-                  Choose…
-                </option>
-                {regions.map((r) => (
-                  <option key={r}>{r}</option>
-                ))}
-              </select>
-            </div>
+            {dutch && (
+              <div className="sm:col-span-2">
+                <label htmlFor="r-region" className={label}>Province</label>
+                <select id="r-region" name="region" required defaultValue="" className={field}>
+                  <option value="" disabled>
+                    Choose…
+                  </option>
+                  {regions.map((r) => (
+                    <option key={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </>
         ) : (
           <>
             <div className="sm:col-span-2">
-              <p className={label}>Categories</p>
+              <p className={label}>Trades</p>
               <Chips options={supplierCategories} value={categories} onChange={setCategories} />
             </div>
             <div className="sm:col-span-2">
@@ -224,11 +303,38 @@ export function RegisterForm({
           </>
         )}
 
+        <div>
+          <label htmlFor="r-first" className={label}>First name (contact person)</label>
+          <input id="r-first" name="contactFirstName" required autoComplete="given-name" className={field} />
+        </div>
+        <div>
+          <label htmlFor="r-last" className={label}>Last name</label>
+          <input id="r-last" name="contactLastName" autoComplete="family-name" className={field} />
+        </div>
+        <div className="sm:col-span-2">
+          <label htmlFor="r-phone" className={label}>Phone (optional)</label>
+          <input id="r-phone" name="phone" type="tel" autoComplete="tel" className={field} />
+        </div>
+
         <div className="sm:col-span-2">
           <label htmlFor="r-email" className={label}>General email address</label>
           <input id="r-email" name="email" type="email" required autoComplete="email" className={field} />
           <p className="mt-1 text-xs text-ink-500">You sign in with this address; we also use it for messages from {site.shortName}.</p>
         </div>
+        {type === "hotel" && (
+          <>
+            <div className="sm:col-span-2">
+              <label htmlFor="r-billing" className={label}>Billing email address</label>
+              <input id="r-billing" name="billingEmail" type="email" required className={field} />
+              <p className="mt-1 text-xs text-ink-500">Your yearly invoice goes here. No IBAN needed now.</p>
+            </div>
+            <div className="sm:col-span-2">
+              <label htmlFor="r-booking" className={label}>Direct booking engine URL</label>
+              <input id="r-booking" name="bookingUrl" type="url" placeholder="https://" className={field} />
+              <p className="mt-1 text-xs text-ink-500">Guests book with you directly, at 0% commission. You can add it later.</p>
+            </div>
+          </>
+        )}
         <div>
           <label htmlFor="r-password" className={label}>Password</label>
           <input id="r-password" name="password" type="password" required minLength={8} maxLength={72} autoComplete="new-password" className={field} />
@@ -245,12 +351,21 @@ export function RegisterForm({
         </p>
       )}
 
-      <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-xs text-ink-500">
-          By registering you agree to the{" "}
-          <a href="/terms" className="underline underline-offset-4">terms</a> and the{" "}
-          <a href="/privacy" className="underline underline-offset-4">privacy policy</a>.
-        </p>
+      <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+        <label className="flex items-start gap-3 text-sm text-ink-700">
+          <input type="checkbox" name="acceptTerms" required className="mt-0.5 size-4 shrink-0 accent-brass-500" />
+          <span>
+            I agree to the{" "}
+            <a href={legalDoc(type === "hotel" ? "terms-hotels" : "terms-suppliers").href} target="_blank" rel="noopener" className="underline underline-offset-4">
+              Terms &amp; Conditions
+            </a>{" "}
+            and{" "}
+            <a href={legalDoc("privacy-cookies").href} target="_blank" rel="noopener" className="underline underline-offset-4">
+              Privacy Policy
+            </a>
+            .
+          </span>
+        </label>
         <button type="submit" disabled={isPending} className={buttonClasses({ size: "lg" })}>
           {isPending ? "Sending…" : "Register"}
           {!isPending && <Icon name="arrow-right" size={17} />}

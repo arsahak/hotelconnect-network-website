@@ -10,7 +10,7 @@ export type NavItem = {
 export type Member = { memberNumber: string; name: string };
 
 export type MembershipPlan = {
-  id: "hotel" | "supplier-contract" | "supplier-commission";
+  id: "hotel" | "supplier-contract" | "supplier-project";
   /** Which kind of member signs up with this plan (also the waitlist type). */
   memberType: "hotel" | "supplier";
   name: string;
@@ -70,6 +70,8 @@ export type Vacancy = {
   description: string;
   category: string;
   employmentType: string;
+  /** Hours per week, free text. */
+  hours?: string;
   city: string;
   region: string;
   urgent: boolean;
@@ -80,7 +82,12 @@ export type Vacancy = {
   image?: string;
   videoUrl?: string;
   publishedAt?: string;
-  hotel: { name: string; slug: string; city: string; image: string };
+  /** Who offers the job (client, 31 Oct): a member hotel or a supplier with a maintenance contract. */
+  employer?: "hotel" | "supplier";
+  /** Supplier jobs: the main group of the category. */
+  categoryGroup?: string;
+  hotel: { name: string; slug: string; city: string; image: string } | null;
+  supplier?: { name: string; slug: string; logo: string; image: string } | null;
 };
 
 export type VoucherTeaser = {
@@ -116,10 +123,30 @@ export type Article = {
 /** Fixed lists for filters (GET /meta/options). */
 export type Options = {
   regions: string[];
+  /** Country_Tag choices (ISO code + English name). */
+  countries: { code: string; name: string }[];
   supplierRegions: string[];
   vacancyCategories: string[];
+  /** Supplier jobs: main group → subcategories. */
+  supplierVacancyGroups: Record<string, string[]>;
   employmentTypes: string[];
   supplierCategories: string[];
   voucherCategories: string[];
   articleKinds: string[];
+};
+
+/** An open tender on the public Tenders page. Hotel and email only for a signed-in supplier. */
+export type PublicTender = {
+  _id: string;
+  type: string;
+  title: string;
+  category: string;
+  country: string;
+  region: string;
+  description: string;
+  deadline: string;
+  size: "need" | "tender";
+  createdAt: string;
+  hotel: { name: string; city: string } | null;
+  contactEmail: string | null;
 };

@@ -8,6 +8,8 @@ export type VacancyFilters = {
   category?: string;
   region?: string;
   urgent?: boolean;
+  /** Jobs at hotels or at suppliers (two lists on the jobs page). */
+  employer?: "hotel" | "supplier";
   page?: number;
   limit?: number;
 };

@@ -157,3 +157,30 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+/* Job descriptions: rich text from the dashboard (bold, italic, lists, links). */
+.job-text > * + * {
+  margin-top: 1rem;
+}
+.job-text ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+}
+.job-text ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+}
+.job-text li + li {
+  margin-top: 0.375rem;
+}
+.job-text a {
+  color: var(--color-brass-600);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.job-text h3,
+.job-text h4 {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  color: var(--color-ink-950);
+}

@@ -12,7 +12,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Become a member",
-  description: `Register your boutique hotel or supply company with ${site.name}. Hotels €499 per year; suppliers free or with a maintenance contract.`,
+  description: `Register your boutique hotel or supply company with ${site.name}. Hotels from €350 per year by number of rooms; suppliers free until 1 May 2028. 0% commission.`,
   path: "/register",
 });
 
@@ -38,7 +38,9 @@ async function RegisterSection({ searchParams }: { searchParams: PageProps<"/reg
       <RegisterForm
         initialType={params.type === "supplier" ? "supplier" : "hotel"}
         initialPlan={params.plan === "contract" ? "contract" : "commission"}
+        invite={typeof params.invite === "string" && /^[a-f0-9]{16,64}$/.test(params.invite) ? params.invite : undefined}
         regions={options.data?.regions ?? fallbackRegions}
+        countries={options.data?.countries ?? [{ code: "NL", name: "Netherlands" }]}
         supplierRegions={options.data?.supplierRegions ?? ["All of the Netherlands", ...fallbackRegions]}
         supplierCategories={options.data?.supplierCategories ?? []}
       />

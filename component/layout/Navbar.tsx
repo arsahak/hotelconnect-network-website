@@ -1,49 +1,44 @@
-import Link from "next/link";
 import { Suspense, type ReactNode } from "react";
-import { cn } from "@/lib/cn";
+import { getCachedOpenTenderCount } from "@/component/shared/cached-tenders";
+import { navItems } from "@/lib/site";
+import type { NavItem } from "@/lib/types";
 import { Container } from "@/component/shared/Container";
-import { JoinButton } from "@/component/shared/JoinButton";
 import { Logo } from "@/component/shared/Logo";
 import { ActiveNavLinks } from "./ActiveNavLinks";
 import { HeaderShell, headerClasses } from "./HeaderShell";
 import { MobileMenu } from "./MobileMenu";
-import { NavLinkList, headerLinkClasses, navUnderlineClasses } from "./NavLinkList";
+import { NavLinkList } from "./NavLinkList";
 
 /** Header row. It is h-20: the homepage hero uses -mt-20 to slide under it. */
-function NavbarContent({ links }: { links: ReactNode }) {
+function NavbarContent({ links, items }: { links: ReactNode; items: NavItem[] }) {
   return (
     <Container className="relative flex h-20 items-center justify-between gap-6">
       <Logo tone="header" />
 
+      {/* Master Briefing v4: only these four links. Log in sits in the hero and the footer. */}
       <nav aria-label="Main menu" className="hidden lg:block">
         {links}
       </nav>
 
-      <div className="hidden items-center gap-6 lg:flex">
-        <Link href="/login" className={cn("hidden xl:inline", navUnderlineClasses, headerLinkClasses)}>
-          Log in
-        </Link>
-        <JoinButton size="md" />
-      </div>
-
-      <MobileMenu />
+      <MobileMenu items={items} />
     </Container>
   );
 }
 
-export function Navbar() {
+export async function Navbar() {
+  const items = navItems((await getCachedOpenTenderCount()) > 0);
   return (
     // usePathname (inside HeaderShell / ActiveNavLinks) may suspend on dynamic
     // routes when Cache Components is on, so a solid header is the fallback.
     <Suspense
       fallback={
         <header data-overlay={false} className={headerClasses}>
-          <NavbarContent links={<NavLinkList />} />
+          <NavbarContent links={<NavLinkList items={items} />} items={items} />
         </header>
       }
     >
       <HeaderShell>
-        <NavbarContent links={<ActiveNavLinks />} />
+        <NavbarContent links={<ActiveNavLinks items={items} />} items={items} />
       </HeaderShell>
     </Suspense>
   );

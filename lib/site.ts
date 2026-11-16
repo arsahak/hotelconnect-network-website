@@ -6,12 +6,8 @@ export const site = {
   // Live address. Used for absolute links in share previews (og:image, og:url).
   url: "https://hotelconnect-network-website.vercel.app",
   description:
-    "The private B2B network for boutique hotels in the Netherlands and their trusted suppliers. Compliance, tenders, jobs and group purchasing — all in one place.",
-  // TODO: replace with the real contact details from the client.
-  email: "info@hotelconnect.nl",
-  phone: "+31 (0)20 000 00 00",
-  phoneHref: "tel:+31200000000",
-  founders: ["Hamid", "Maaike"],
+    "The digital cockpit for independent boutique hotels: daily operations for every department, 100% inspection-proof compliance, and a 0% commission network of trusted suppliers.",
+  email: "info@hotelconnectnetwork.com",
   copyrightYear: 2026,
   // Where members sign in (the dashboard app). /login on this site sends them there.
   dashboardUrl: (process.env.NEXT_PUBLIC_DASHBOARD_URL || "http://localhost:3001").replace(/\/+$/, ""),
@@ -30,9 +26,13 @@ export const mainNav: NavItem[] = [
   { label: "Hotels", href: "/hotels" },
   { label: "Jobs", href: "/jobs" },
   { label: "Suppliers", href: "/suppliers" },
-  { label: "Purchasing", href: "/purchasing" },
-  { label: "About us", href: "/about" },
 ];
+
+/** The menu, with "Tenders" between Hotels and Jobs while a tender is open (v4). */
+export function navItems(showTenders: boolean): NavItem[] {
+  if (!showTenders) return mainNav;
+  return [...mainNav.slice(0, 2), { label: "Tenders", href: "/tenders" }, ...mainNav.slice(2)];
+}
 
 /** Regions used by the search bar filters (demo list). */
 export const regions = [
@@ -60,13 +60,6 @@ export const footerNav: { title: string; items: NavItem[] }[] = [
       { label: "Purchasing & webshops", href: "/purchasing" },
     ],
   },
-  {
-    title: "For members",
-    items: [
-      { label: "Log in", href: "/login" },
-      { label: "Corporate vouchers", href: "/suppliers/vouchers" },
-    ],
-  },
 ];
 
 // TODO: replace with the client's real social media pages.
@@ -77,62 +70,79 @@ export const socialLinks = [
   { label: "YouTube", href: "https://www.youtube.com/", icon: "youtube" },
 ] as const;
 
-export const legalNav: NavItem[] = [
-  { label: "Privacy policy", href: "/privacy" },
-  { label: "Terms and conditions", href: "/terms" },
+export type LegalDoc = NavItem & { key: "terms-hotels" | "terms-suppliers" | "privacy-cookies" | "privacy-disclaimer"; title: string };
+
+/** The official legal documents (PDF, Dutch) in public/legal. */
+export const legalNav: LegalDoc[] = [
+  { key: "terms-hotels", label: "Terms & Conditions (Hotels)", title: "Algemene Voorwaarden Hotels", href: "/legal/algemene-voorwaarden-hotels.pdf" },
+  { key: "terms-suppliers", label: "Terms & Conditions (Suppliers)", title: "Algemene Voorwaarden Leveranciers", href: "/legal/algemene-voorwaarden-leveranciers.pdf" },
+  { key: "privacy-cookies", label: "Privacy & Cookie Policy", title: "Cookie- en Privacyverklaring", href: "/legal/cookie-en-privacyverklaring.pdf" },
+  { key: "privacy-disclaimer", label: "Privacy & Disclaimer", title: "Privacy- en Disclaimerverklaring", href: "/legal/privacy-en-disclaimerverklaring.pdf" },
+];
+export const legalDoc = (key: LegalDoc["key"]) => legalNav.find((d) => d.key === key)!;
+
+// Prices: Master Briefing v4 and the agreements (13 Nov 2026). Excl. VAT, 0% commission.
+/** Hotels pay by number of rooms, once a year. */
+export const hotelTiers = [
+  { name: "Small Boutique", rooms: "Up to 15 rooms", price: "€350" },
+  { name: "Medium Boutique", rooms: "16 to 40 rooms", price: "€490" },
+  { name: "Large Boutique", rooms: "40+ rooms", price: "€750" },
 ];
 
-// Prices and texts from the client's price page (26 Oct 2026).
+/** Suppliers: free until this date, then one of the two supplier plans. */
+export const supplierFreeUntil = "1 May 2028";
+
 export const membershipPlans: MembershipPlan[] = [
   {
     id: "hotel",
     memberType: "hotel",
     name: "Hotels",
-    audience: "One account for the whole hotel. Less admin, more hospitality.",
-    priceLabel: "€499",
-    priceNote: "per year",
+    audience: "One account for the whole hotel: compliance, the floor teams, purchasing and tenders.",
+    priceLabel: "From €350",
+    priceNote: "per year, by number of rooms · Founding Hotels: the first 12 months free",
     memberNumber: "H0001",
     highlighted: true,
     features: [
-      "Compliance Radar: reminders for your contracts and permits",
-      "Tenders: compare up to 3 quotes",
+      "Compliance Radar & Audit Shield: never miss a contract or permit deadline",
+      "Floor control for Housekeeping, Maintenance, Front Office and F&B",
+      "Procurement & contracts: order from your partners in one tap",
+      "Tenders: post anonymously and get quotes from verified suppliers",
       "Jobs: post vacancies and get applications directly",
-      "Group purchasing: save on energy and other costs",
-      "Corporate vouchers and direct room bookings at 0% commission",
-      "Useful lists, repair contacts and a knowledge base",
+      "Your hotel in the guide with direct booking at 0% commission",
     ],
     cta: "Join as a hotel",
   },
   {
-    id: "supplier-contract",
+    id: "supplier-project",
     memberType: "supplier",
-    name: "Suppliers with a maintenance contract",
-    audience: "For suppliers who work with hotels regularly: maintenance, repairs and inspections.",
-    priceLabel: "€49",
-    priceNote: "per month, or €539 per year (one month free)",
+    name: "Project & Capex Partner",
+    audience: "For one-off projects and investments: contractors, painters, roofers, interior work.",
+    priceLabel: "€0",
+    priceNote: `until ${supplierFreeUntil} · then €19 per month (€209 per year)`,
     memberNumber: "L001",
     features: [
       "Your profile in the supplier directory",
-      "An invitation to every tender in your category and region",
-      "Rank higher with good reviews",
-      "No commission on your contracts",
+      "Tenders for one-off projects in your trade and country",
+      "Contact hotels directly: 0% commission on won work",
+      "Free until 1 May 2028",
     ],
-    cta: "Join as a supplier",
+    cta: "Join as a project partner",
   },
   {
-    id: "supplier-commission",
+    id: "supplier-contract",
     memberType: "supplier",
-    name: "Suppliers without a contract",
-    audience: "For one-off jobs, such as painters, contractors and roofers.",
-    priceLabel: "Free",
-    priceNote: "commission only when you win a job",
+    name: "Maintenance Partner",
+    audience: "For suppliers with recurring work: maintenance, inspections and service contracts.",
+    priceLabel: "€0",
+    priceNote: `until ${supplierFreeUntil} · then €59 per month (€649 per year)`,
     memberNumber: "L001",
     features: [
-      "Free registration and your own dashboard",
-      "Invitations to tenders in your category and region",
-      "Compete for jobs with your quote",
-      "No subscription or monthly fee. You don't win, you don't pay",
+      "Everything in Project & Capex Partner",
+      "Maintenance tenders and recurring service work",
+      "Post vacancies on the jobs page",
+      "My Partner Hotels: the hotels you work for in one list",
+      "Invite your hotels in one click",
     ],
-    cta: "Register as a supplier",
+    cta: "Join as a maintenance partner",
   },
 ];

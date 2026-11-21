@@ -59,8 +59,8 @@ export function Footer() {
           ))}
 
           {/* The signed legal documents (PDF): open in a new tab */}
-          <nav aria-label="Legal">
-            <FooterHeading>Legal</FooterHeading>
+          <nav aria-label="Privacy">
+            <FooterHeading>Privacy</FooterHeading>
             <ul className="mt-5 space-y-3">
               {legalNav.map((item) => (
                 <li key={item.href}>

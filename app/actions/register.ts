@@ -1,5 +1,6 @@
 "use server";
 
+import { headers } from "next/headers";
 import { apiRequest, type ActionResponse } from "@/lib/api";
 
 export type RegistrationInput = {
@@ -15,6 +16,9 @@ export type RegistrationInput = {
   country: string;
   /** "I agree to the Terms & Conditions and Privacy Policy" — must be true. */
   acceptTerms: boolean;
+  /** Version and keys of the documents the member accepted (clickwrap). */
+  termsVersion: string;
+  termsDocuments: string[];
   legalName?: string;
   vatNumber?: string;
   address?: string;
@@ -37,9 +41,12 @@ export type RegistrationInput = {
  * once approved, the member signs in on the dashboard with this password.
  */
 export async function registerAction(data: RegistrationInput): Promise<ActionResponse<{ _id: string }>> {
+  // The visitor's IP for the clickwrap audit trail (Nginx passes it in X-Forwarded-For).
+  const h = await headers();
+  const clientIp = (h.get("x-forwarded-for")?.split(",")[0] || h.get("x-real-ip") || "").trim();
   return apiRequest<{ _id: string }>("/registrations", {
     method: "POST",
-    body: data,
+    body: { ...data, clientIp },
     fallbackError: "Your registration could not be sent. Please try again.",
   });
 }

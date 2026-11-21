@@ -1,9 +1,12 @@
 import type { NextConfig } from "next";
 
-// Client (31 Oct): one domain. hotelconnect-network.nl/dashboard is the
-// dashboard app (its own deployment, built with NEXT_PUBLIC_BASE_PATH=/dashboard);
-// the website passes those requests through when DASHBOARD_ORIGIN is set.
+// The dashboard runs on its own subdomain: dashboard.hotelconnectnetwork.com
+// (client's agreements, 21 Nov 2026), set in NEXT_PUBLIC_DASHBOARD_URL.
+// Old links to hotelconnectnetwork.com/dashboard are sent there.
+// (Optional: DASHBOARD_ORIGIN serves the dashboard under /dashboard instead —
+// then build the dashboard with NEXT_PUBLIC_BASE_PATH=/dashboard.)
 const dashboardOrigin = (process.env.DASHBOARD_ORIGIN ?? "").replace(/\/+$/, "");
+const dashboardUrl = (process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "").replace(/\/+$/, "");
 
 const nextConfig: NextConfig = {
   async rewrites() {
@@ -11,6 +14,13 @@ const nextConfig: NextConfig = {
     return [
       { source: "/dashboard", destination: `${dashboardOrigin}/dashboard` },
       { source: "/dashboard/:path*", destination: `${dashboardOrigin}/dashboard/:path*` },
+    ];
+  },
+  async redirects() {
+    if (dashboardOrigin || !dashboardUrl) return [];
+    return [
+      { source: "/dashboard", destination: `${dashboardUrl}/dashboard`, permanent: false },
+      { source: "/dashboard/:path*", destination: `${dashboardUrl}/dashboard/:path*`, permanent: false },
     ];
   },
   cacheComponents: true,

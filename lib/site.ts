@@ -70,16 +70,40 @@ export const socialLinks = [
   { label: "YouTube", href: "https://www.youtube.com/", icon: "youtube" },
 ] as const;
 
-export type LegalDoc = NavItem & { key: "terms-hotels" | "terms-suppliers" | "privacy-cookies" | "privacy-disclaimer"; title: string };
+/** Version of the legal documents (client, 21 Nov 2026); stored with every acceptance at registration. */
+export const LEGAL_VERSION = "v1.0 – November 2026";
 
-/** The official legal documents (PDF, Dutch) in public/legal. */
-export const legalNav: LegalDoc[] = [
-  { key: "terms-hotels", label: "Terms & Conditions (Hotels)", title: "Algemene Voorwaarden Hotels", href: "/legal/algemene-voorwaarden-hotels.pdf" },
-  { key: "terms-suppliers", label: "Terms & Conditions (Suppliers)", title: "Algemene Voorwaarden Leveranciers", href: "/legal/algemene-voorwaarden-leveranciers.pdf" },
-  { key: "privacy-cookies", label: "Privacy & Cookie Policy", title: "Cookie- en Privacyverklaring", href: "/legal/cookie-en-privacyverklaring.pdf" },
-  { key: "privacy-disclaimer", label: "Privacy & Disclaimer", title: "Privacy- en Disclaimerverklaring", href: "/legal/privacy-en-disclaimerverklaring.pdf" },
+export type LegalLang = "en" | "nl" | "fr";
+export type LegalKey = "hotel-agreement" | "hotel-terms" | "supplier-agreement" | "privacy-cookies" | "privacy-disclaimer";
+export type LegalDoc = NavItem & {
+  key: LegalKey;
+  /** Original title of the document. */
+  title: string;
+  /** The PDF per language (public/legal). href is the English one, or Dutch when there is no English. */
+  files: Partial<Record<LegalLang, string>>;
+};
+
+const pdf = (name: string, langs: LegalLang[]) => Object.fromEntries(langs.map((l) => [l, `/legal/${name}-${l}.pdf`])) as Partial<Record<LegalLang, string>>;
+const doc = (key: LegalKey, label: string, title: string, files: Partial<Record<LegalLang, string>>): LegalDoc => ({ key, label, title, files, href: files.en ?? files.nl! });
+
+/** The official legal documents (client, 21 Nov 2026). */
+export const legalDocs: LegalDoc[] = [
+  doc("hotel-agreement", "Cloud Services Agreement (Hotels)", "Overeenkomst tot levering van clouddiensten – Hotels", pdf("hotel-agreement", ["en", "nl", "fr"])),
+  doc("hotel-terms", "Terms & Conditions (Hotels)", "SaaS Algemene Voorwaarden – Hotels", pdf("hotel-terms", ["en", "nl", "fr"])),
+  doc("supplier-agreement", "Cloud Services & Membership Agreement (Suppliers)", "Overeenkomst tot levering van clouddiensten – Leveranciers", pdf("supplier-agreement", ["en", "nl", "fr"])),
+  doc("privacy-cookies", "Cookie & Privacy Statement", "Cookie- en Privacyverklaring", pdf("cookie-privacy", ["nl"])),
+  doc("privacy-disclaimer", "Privacy & Disclaimer", "Privacy- en Disclaimerverklaring", pdf("privacy-disclaimer", ["nl"])),
 ];
-export const legalDoc = (key: LegalDoc["key"]) => legalNav.find((d) => d.key === key)!;
+export const legalDoc = (key: LegalKey) => legalDocs.find((d) => d.key === key)!;
+
+/** Footer: only the cookie and privacy documents (client, 21 Nov 2026). */
+export const legalNav: LegalDoc[] = [legalDoc("privacy-cookies"), legalDoc("privacy-disclaimer")];
+
+/** What a new member accepts (clickwrap) when registering. */
+export const signupDocs: Record<"hotel" | "supplier", LegalKey[]> = {
+  hotel: ["hotel-agreement", "hotel-terms"],
+  supplier: ["supplier-agreement"],
+};
 
 // Prices: Master Briefing v4 and the agreements (13 Nov 2026). Excl. VAT, 0% commission.
 /** Hotels pay by number of rooms, once a year. */

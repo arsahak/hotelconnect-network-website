@@ -5,7 +5,7 @@ import { registerAction, type RegistrationInput } from "@/app/actions/register";
 import { buttonClasses } from "@/component/shared/button-styles";
 import { Icon } from "@/component/shared/Icon";
 import { cn } from "@/lib/cn";
-import { hotelTiers, legalDoc, membershipPlans, site } from "@/lib/site";
+import { hotelTiers, LEGAL_VERSION, legalDoc, membershipPlans, signupDocs, site } from "@/lib/site";
 
 type Type = RegistrationInput["type"];
 type Plan = NonNullable<RegistrationInput["plan"]>;
@@ -117,6 +117,8 @@ export function RegisterForm({
           password: get("password"),
           country,
           acceptTerms: form.get("acceptTerms") === "on",
+          termsVersion: LEGAL_VERSION,
+          termsDocuments: signupDocs[type],
           ...(type === "hotel"
             ? {
                 legalName: get("legalName"),
@@ -351,21 +353,46 @@ export function RegisterForm({
         </p>
       )}
 
-      <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-        <label className="flex items-start gap-3 text-sm text-ink-700">
+      {/* Clickwrap (client, 21 Nov 2026): ticking the box signs the agreement digitally. */}
+      <fieldset className="mt-8 rounded-lg border border-line bg-cream/60 p-5">
+        <legend className="px-1 text-sm font-medium text-ink-900">Agreement</legend>
+        <ul className="space-y-2 text-sm">
+          {signupDocs[type].map((key) => {
+            const d = legalDoc(key);
+            return (
+              <li key={key} className="flex flex-wrap items-center justify-between gap-2">
+                <span className="flex items-center gap-2 text-ink-700">
+                  <Icon name="file" size={16} className="text-brass-500" />
+                  {d.label}
+                </span>
+                <span className="flex gap-1.5">
+                  {(Object.entries(d.files) as [string, string][]).map(([lang, href]) => (
+                    <a key={lang} href={href} target="_blank" rel="noopener" className="rounded border border-line bg-white px-2 py-0.5 text-xs font-semibold uppercase text-ink-700 hover:border-brass-500 hover:text-brass-600">
+                      {lang}
+                    </a>
+                  ))}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+        <label className="mt-4 flex items-start gap-3 border-t border-line pt-4 text-sm text-ink-700">
           <input type="checkbox" name="acceptTerms" required className="mt-0.5 size-4 shrink-0 accent-brass-500" />
           <span>
-            I agree to the{" "}
-            <a href={legalDoc(type === "hotel" ? "terms-hotels" : "terms-suppliers").href} target="_blank" rel="noopener" className="underline underline-offset-4">
-              Terms &amp; Conditions
-            </a>{" "}
-            and{" "}
+            I am authorised to represent my company and I agree to the{" "}
+            {type === "hotel" ? "Cloud Services Agreement and the Terms & Conditions for hotels" : "Cloud Services & Membership Agreement for suppliers"}, and the{" "}
             <a href={legalDoc("privacy-cookies").href} target="_blank" rel="noopener" className="underline underline-offset-4">
-              Privacy Policy
+              privacy statement
             </a>
-            .
+            . Ticking this box is my digital signature.
           </span>
         </label>
+        <p className="mt-2 text-xs text-ink-500">
+          Version {LEGAL_VERSION}. We record the date, time, IP address and document version as proof of acceptance.
+        </p>
+      </fieldset>
+
+      <div className="mt-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-end">
         <button type="submit" disabled={isPending} className={buttonClasses({ size: "lg" })}>
           {isPending ? "Sending…" : "Register"}
           {!isPending && <Icon name="arrow-right" size={17} />}
